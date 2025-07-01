@@ -1,5 +1,5 @@
 var api_key = 'e1f10a1e78da46f5b10a1e78da96f525';
-var map_key = 'pk.eyJ1Ijoic3RpbGxub3RicmFuZG9uIiwiYSI6ImNtN3R1OW1iNzBhMTEybG9oNzg5ZHRudGwifQ.iHfjHZCiu4d6g4g7uzVJkA'; //gonna remove this for the initial public commit
+var map_key = 'YOUR-API-KEY';
 
 var appearanceSettings = {
     marqueeAd: [

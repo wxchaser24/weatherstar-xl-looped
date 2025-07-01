@@ -3,10 +3,7 @@ $(function(){
 		$window = $( window ),
 	    mainHeight = $main.outerHeight(),
 	    mainWidth = $main.outerWidth(),
-	    mainAspect = 4/3,
-	    resizeTimer;
-
-//calls rescale when window resizes
+	    mainAspect = 4/3;
 	$(window).resize(() =>{
 		scaleWindow();
 	});
@@ -28,6 +25,6 @@ $(function(){
 			transform: "translate(-50%, -50%) " + "scale(" + scale + ")"
 		});
 	}
-	scaleWindow(); // init
+	scaleWindow();
 
 });

@@ -223,8 +223,9 @@ body, html {
     position: absolute;
     text-shadow: 2px 2px #000;
     margin-top: 320px;
-    margin-left: 220px;
+    margin-left: 540px;
     color: gold;
+    width: 270px;
 }
 .songchoice {
     margin-left: 10.8%;

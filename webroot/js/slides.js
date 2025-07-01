@@ -85,6 +85,7 @@ function showSlides() {
                 }
                 if (weatherInfo.eightCities.cities.length == 0) {
                     slideCallBack();
+                    return;
                 }
                 $('.eight-cities').fadeIn(0);
                 var eightSlideCount = 0;
