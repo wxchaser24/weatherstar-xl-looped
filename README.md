@@ -1,1 +1,1 @@
-# WeatherSTAR-XL
+# WeatherSTAR XL
