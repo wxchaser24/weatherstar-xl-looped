@@ -404,7 +404,7 @@ function showSlides() {
         audioPlayer = null;
         setTimeout(() =>{
             window.location.reload();
-        }, 10000);
+        }, 3000);
     }
     if (nidx >= slideSettings.order.length) {
         nidx = 0;
