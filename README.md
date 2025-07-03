@@ -13,7 +13,7 @@ Online version: [xl.weatherstar.dev](https://xl.weatherstar.dev)
 **Special thanks to these talented minds who made this project possible!**
 
 **JensonWX** - Lead Developer  
-**Miceoroni** - Developer (Maps)
+**Miceoroni** - Developer (Maps)  
 **zachNet** - README
 
 and the rest of the Mist Creative Team for their support!
