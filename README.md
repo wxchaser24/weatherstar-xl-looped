@@ -1,4 +1,4 @@
-# WeatherSTAR XL
+![](https://media.discordapp.net/attachments/1277358525072412803/1390365205426475110/WeatherStarXLHeader.webp?ex=6867fe00&is=6866ac80&hm=9e28d688ee67f1b423374f9c71625bf9cf6ee955334393db228f01bfb6f372a7&=&format=webp)
 
 ------------
 
