@@ -173,7 +173,8 @@ font-family: 'AG Bold Ex';
     display: flex;
     margin-left: 80px;
     font-size: 28px;
-    margin-top: 161px;
+    width: 580px;
+    height: 60px;
 }
 .eight-cities .extra-loc .city-name {    
     font-family: "Akzidenz Md";
@@ -214,14 +215,8 @@ font-family: 'AG Bold Ex';
     margin-left: 357px;
     margin-top: 24px;
 }
-.eight-cities .extra-loc.ii {
-    margin-top: 60px;
-}
-.eight-cities .extra-loc.iii {
-    margin-top: 60.5px;
-}
-.eight-cities .extra-loc.iv {
-    margin-top: 59.5px;
+.eight-cities .extra-loc.i {
+    margin-top: 161px;
 }
 .eight-cities .extra-loc.ii .icon {
     margin-top: 27px;
