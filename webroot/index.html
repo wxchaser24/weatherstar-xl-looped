@@ -94,9 +94,9 @@
     <div id="settings-menu" class="container">
         <div class="bg"></div>
         <div class="version"></div>
+        <img class="xllogo" src="images/WSXL_logo_white_ds.png">
     </div>
     <div id="settings-menu-content" class="container">
-        <img class="xllogo" src="images/WSXL_logo_white_ds.png">
         <!--Location-->
         <h1 class="locname">Location Name:</h1>
         <h1 class="locdisplayname"></h1>
@@ -119,6 +119,16 @@
         <button class="ldlbut crawl-button" onclick="setLDLType('crawl')">Crawl</button>
         <button class="ldlbut both-button" onclick="setLDLType('both')">Both</button>
         <div class="ldlwarning" style="display: none;">WARNING: Both will only work if the flavor is 120 seconds.</div>
+
+        <button class="songbutton" onclick="songSettings('in')">Song Settings</button>
+        <!--Start Button-->
+        <button class="start-button" onclick="startButton()">Start</button>
+        <h3 id="promo">Created by</h3>
+        <h3 id="promoii">, brought to you by </h3>
+        <div class="jwx" title="JensonWX"></div>
+        <div class="mistpromo"><a href="https://mistwx.com/" target="_blank" title="Mist Weather Media"></a></div>
+    </div>
+    <div id="song-settings" class="container" style="display: none;">
         <!--Song Choice-->
         <h1 class="songchoice">Song:</h1>
         <select id="songinput">
@@ -139,12 +149,12 @@
             <option value="14">Lazy Days</option>
             <option value="15">Beach Frolic</option>
         </select>
-        <!--Start Button-->
-        <button class="start-button" onclick="startButton()">Start</button>
-        <h3 id="promo">Created by</h3>
-        <h3 id="promoii">, brought to you by </h3>
-        <div class="jwx" title="JensonWX"></div>
-        <div class="mistpromo"><a href="https://mistwx.com/" target="_blank" title="Mist Weather Media"></a></div>
+        <h1 class="offsetlabel">Offset:</h1>
+        <h3 class="offsetwarning">NOTE: The sim waits 4 seconds before starting &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If you want to play a song 20 seconds in, start at 16</h3>
+        <h1 class="uploadsonglabel">Upload Song:</h1>
+        <input type="number" class="input" id="songoffset" autocomplete="off" placeholder="0">
+        <button class="songback" onclick="songSettings('out')">Back</button>
+        <input id="songuploadinput" type="file" name="song" accept="audio/*">
     </div>
     <div id="main" class="container">
         <div class="date-time" id="date" style="display:none;"></div>

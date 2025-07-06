@@ -11,7 +11,7 @@ class AudioManager {
             this.buildPlaylist();
             if (audioSettings.randomStart) { this.shuffleStart() }
             if (audioSettings.shuffle) { shuffle(this.playlist) }
-            this.startPlaying(this.playlist, true);
+            //this.startPlaying(this.playlist, true);
         }
     }
 
@@ -43,9 +43,9 @@ class AudioManager {
 
     buildPlaylist() {
         var musicPath = 'music/';
-        audioSettings.order.forEach(order => {
-            this.playlist.push(`${musicPath}Track ${order}.mp3`);
-        });
+        for(var i = 0; i < audioSettings.order.length; i++){
+            this.playlist.push(`${musicPath}${audioSettings.order[i]}.mp3`);
+        }
     }
 
     startPlaying(arr, loop) {
@@ -87,7 +87,7 @@ class AudioManager {
 
         const preloadTrack = (trackName) => {
             try {
-                $preloader.jPlayer('setMedia', { mp3: trackName }).jPlayer('play').jPlayer('stop');
+                $preloader.jPlayer('setMedia', { mp3: trackName }).jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0).jPlayer('stop');
             } catch (e) {
                 setTimeout(() => preloadTrack(trackName), 500);
             }
@@ -105,11 +105,11 @@ class AudioManager {
             $player = null, $preloader = null;
             $player = tempAudio2;
             $preloader = tempAudio;
-            $player.jPlayer('play');
+            $player.jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0);
 
             $(document).on('mousedown', () => {
                 if (!this.isMobile) {
-                    $player.jPlayer('play');
+                    $player.jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0);
                     this.isMobile = true;
                 }
             });
@@ -131,4 +131,4 @@ class AudioManager {
     }
 }
 
-var audioPlayer;
+var audioPlayer = new AudioManager();

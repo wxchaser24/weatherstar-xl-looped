@@ -85,7 +85,7 @@ body, html {
 #settings-menu .bg {
     filter: blur(4px);
 }
-#settings-menu-content {
+#settings-menu-content, #song-settings {
     position: absolute;
     width: 1000px;
     height: 500px;
@@ -98,26 +98,26 @@ body, html {
     left: 50%;
     top: 50%;
 }
-#settings-menu-content .xllogo {
+#settings-menu .xllogo {
     position: absolute;
     height: 90px;
-    left: 90px;
-    top: -125px;
+    left: 405px;
+    top: 165px;
     filter: drop-shadow(2px 2px 5px #000);
 }
-#settings-menu-content button {
+#settings-menu-content button, #song-settings button, .butn {
     position: absolute;
     font-family: "AG Bold Ex";
     color: #debd69;
     background-color: #232731;
     pointer-events: auto !important;
 }
-#settings-menu-content button:hover {
+#settings-menu-content button:hover, #song-settings button:hover, .butn:hover {
     background-color: #323741;
     color: #d4d4d4;
     cursor: pointer;
 }
-.aspectratio, .locname, .locdisplayname, .flavortype, .ldltype, .songchoice {
+.aspectratio, .locname, .locdisplayname, .flavortype, .ldltype, .songchoice, .songback, .offsetlabel, .uploadsonglabel {
     font-family: "AG Bold Ex";
     position: absolute;
     font-size: 30px;
@@ -140,10 +140,6 @@ body, html {
 }
 .ldltype {
     margin-top: 270px;
-}
-.songchoice {
-    margin-left: 10px;
-    margin-top: 375px;
 }
 #loclookup {
     font-family: "Akzidenz Bold";
@@ -219,7 +215,7 @@ body, html {
     margin-left: 670px;
     width: 160px;
 }
-.ldlwarning {
+.ldlwarning, .offsetwarning {
     position: absolute;
     text-shadow: 2px 2px #000;
     margin-top: 320px;
@@ -227,19 +223,57 @@ body, html {
     color: gold;
     width: 270px;
 }
+.offsetwarning {
+    margin-top: 150px;
+    margin-left: 350px;
+    width: 450px;
+}
 .songchoice {
     margin-left: 10.8%;
-    margin-top: 330px;
+    margin-top: 75px;
 }
 #songinput {
     position: absolute;
-    margin-top: 330px;
+    margin-top: 75px;
     font-family: 'Akzidenz Bold';
     font-size: 22px;
     width: 240px;
     margin-left: 242px;
     z-index: 1000;
     height: 38px;
+}
+#songoffset {
+    font-family: "Akzidenz Bold";
+    position: absolute;
+    margin-left: 267px;
+    margin-top: 150px;
+    width: 64px;
+    height: 40px;
+    z-index: 10000;
+    font-size: 30px;
+    text-align: center;
+}
+.offsetlabel {
+    margin-left: 10.8%;
+    margin-top: 150px;
+}
+.uploadsonglabel {
+    margin-left: 10.8%;
+    margin-top: 225px;
+}
+.songbutton, #songuploadinput {
+    position: absolute;
+    font-size: 30px;
+    width: 300px;
+    margin-top: 402.5px;
+    margin-left: 30px;
+    height: 45px;
+    z-index: 1000;
+}
+#songuploadinput {
+    margin-top: 225px;
+    margin-left: 410px;
+    width: 600px;
 }
 .start-button {
     position: absolute;
@@ -295,4 +329,13 @@ body, html {
     text-shadow: 2px 2px #000;
     top: 20px;
     left: 20px;
+}
+.songback {
+    position: absolute;
+    width: 240px;
+    height: 70px;
+    z-index: 9999;
+    font-size: 48px;
+    margin-left: 370px;
+    margin-top: 390px;
 }

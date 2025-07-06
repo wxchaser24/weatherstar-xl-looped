@@ -1,4 +1,9 @@
 Make sure to report any bugs or issues in the Issues tab!
+= JULY 5, 2025 | VERSION 1.1 =
+ -  Added new song settings page
+ -  You can now upload a song of your choice
+ -  Added offset feature, where you can start the song at any point now
+ -  Changed audio settings on config menu
 = JULY 5, 2025 | VERSION 1.01 =
  -  Fixed nearby cities layering bug in 4:3 mode
  -  Sim now preloads moon phases

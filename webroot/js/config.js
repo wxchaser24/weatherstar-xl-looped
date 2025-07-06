@@ -10,7 +10,7 @@ var appearanceSettings = {
     iconSet: "2005", //I highly recommend you do not change this value unless you are more experienced. If you do, the sim will look for a file called icons(value)sprite.png.
     ldlType: '', //what you want to see on ldl. 'observations' = only observations / 'crawl' = only local ad sales / 'both' = both but only will fit during the two minute flavor
     startupTime: 4000, //How long you want to wait for it to start up.
-    version: "1.01"
+    version: "1.1"
 }
 
 var slideSettings = {
@@ -33,10 +33,27 @@ var audioSettings = {
     shuffle: true, //Self-explanatory. Default is true.
     randomStart: true, //Also should be self-explanatory. Default is true.
     narrations: true, //Also should be self-explanatory. Default is true.
-    order: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], 
+    order: [
+        "Track 1",
+        "Track 2",
+        "Track 3",
+        "Track 4",
+        "Track 5",
+        "Track 6",
+        "Track 7",
+        "Track 8",
+        "Track 9",
+        "Track 10",
+        "Track 11",
+        "Track 12",
+        "Track 13",
+        "Track 14",
+        "Track 15"
+    ],
+    offset: 0
     //The order of what songs you want. This feature is probably more 
     //old since the thing does not loop, and it will only choose one song. 
-    //If you want your own specific song to play, add it as "Track (number)" still, 
-    //but change the order to [(number)] instead of adding it on.
+    //If you want your own specific song to play, add the file name to the array, 
+    //and change the order to ["(file name)"] instead of adding it on.
 }
   

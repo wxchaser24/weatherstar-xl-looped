@@ -341,7 +341,7 @@ function grabData() {
 }
 
 function startProgram(){
-  audioPlayer = new AudioManager();
+  audioPlayer.startPlaying(audioPlayer.playlist, true);
   setTimeout(() => {
     grabData();
     createMaps();
