@@ -14,7 +14,7 @@ Online version: [xl.weatherstar.dev](https://xl.weatherstar.dev)
 
 **JensonWX** - Lead Developer  
 **Miceoroni** - Developer (Maps)  
-**COLSTER** - Developer (v2 Graphics) 
+**COLSTER** - Developer (v2 Graphics)   
 **zachNet** - README
 
 and the rest of the Mist Creative Team for their support!
