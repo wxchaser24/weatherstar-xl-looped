@@ -1,5 +1,9 @@
 setTimeout(() => {
     $("#settings-menu .version").text(`Version ${appearanceSettings.version}`);
+    $("#styles").append(`<link rel="stylesheet" href="wxstarxl32${appearanceSettings.graphicsPackage}.css">`);
+    setTimeout(() => {  
+        $("#styles").children('link').first().remove();
+    }, 10);
 }, 10);
 setTimeout(() => {
     $('.locdisplayname')
@@ -8,6 +12,13 @@ setTimeout(() => {
 }, 1500)
 
 function startButton() {
+    if(locationConfig.mainCity.displayname == undefined){
+        $(".locwarning").fadeIn(0);
+        $(".locdisplayname").css('color', '#fff');
+        setTimeout(() => { $('.locwarning').fadeOut(1000); }, 2500)
+        setTimeout(() => { $('.locdisplayname').css('color', ''); }, 3000)
+        return;
+    }
     if (appearanceSettings.ldlType == '' && slideSettings.flavor == '') {
         appearanceSettings.ldlType = 'both';
         slideSettings.flavor = 'M';
@@ -153,8 +164,10 @@ function setAspectRatio(asp) {
         $('.asp.three-two-button').css("background-color", "");
         $('.asp.three-two-button').css("color", "");
 
-        $("#styles").empty();
         $("#styles").append(`<link rel="stylesheet" href="wxstarxl43${appearanceSettings.graphicsPackage}.css">`);
+        setTimeout(() => {  
+            $("#styles").children('link').first().remove();
+        }, 10);
     } else if (asp == 3 / 2) {
         appearanceSettings.aspectRatio = 3 / 2;
         $('.asp.three-two-button').css("background-color", "#323741");
@@ -163,8 +176,10 @@ function setAspectRatio(asp) {
         $('.asp.four-three-button').css("background-color", "");
         $('.asp.four-three-button').css("color", "");
 
-        $("#styles").empty();
         $("#styles").append(`<link rel="stylesheet" href="wxstarxl32${appearanceSettings.graphicsPackage}.css">`);
+        setTimeout(() => {  
+            $("#styles").children('link').first().remove();
+        }, 10);
     }
 }
 
@@ -322,11 +337,15 @@ function versionSettings(fade, version){
         return;
     }
     if(appearanceSettings.aspectRatio == 3/2){
-        $("#styles").empty();
         $("#styles").append(`<link rel="stylesheet" href="wxstarxl32${version}.css">`);
+        setTimeout(() => {  
+            $("#styles").children('link').first().remove();
+        }, 10);
     } else if(appearanceSettings.aspectRatio == 4/3){
-        $("#styles").empty();
         $("#styles").append(`<link rel="stylesheet" href="wxstarxl43${version}.css">`);
+        setTimeout(() => {  
+            $("#styles").children('link').first().remove();
+        }, 10);
     }
     appearanceSettings.graphicsPackage = version;
 }

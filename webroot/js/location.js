@@ -125,7 +125,7 @@ function locationGrab() {
       $.getJSON("http://ip-api.com/json/", function(data) {
         locationConfig.mainCity.displayname = data.city
         locationConfig.mainCity.lat = data.lat
-        locationConfig.mainCity.lon = data.lonn
+        locationConfig.mainCity.lon = data.lon
         locationConfig.mainCity.state = data.region
         locationConfig.mainCity.stateFull = data.regionName
         if(locationTimezone == undefined){locationTimezone = data.timezone;}
