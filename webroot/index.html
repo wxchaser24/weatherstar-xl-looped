@@ -9,22 +9,33 @@
 
     <link rel="stylesheet" href="main.css">
     <div id="styles">
-        <link rel="stylesheet" href="wxstarxl32.css">
+        <link rel="stylesheet" href="wxstarxl32v2.css">
     </div>
 
     <!--Preloads-->
     <!--Backgrounds-->
-    <link rel="preload" href="images/domestic.png" as="image" type="image/png">
-    <link rel="preload" href="images/xlcc.png" as="image" type="image/png">
-    <link rel="preload" href="images/xlcclo.png" as="image" type="image/png">
-    <link rel="preload" href="images/xlalm.png" as="image" type="image/png">
-    <link rel="preload" href="images/xlalert.png" as="image" type="image/png">
-    <link rel="preload" href="images/xlext7.png" as="image" type="image/png">
-    <link rel="preload" href="images/xl36h.png" as="image" type="image/png">
-    <link rel="preload" href="images/dpf_today.png" as="image" type="image/png">
-    <link rel="preload" href="images/dpf_tonight.png" as="image" type="image/png">
-    <link rel="preload" href="images/dpf_tomorrow.png" as="image" type="image/png">
-    <link rel="preload" href="images/us_radar_top.png" as="image" type="image/png">
+    <link rel="preload" href="images/v2/domestic.png" as="image" type="image/png">
+    <link rel="preload" href="images/v2/xlcc.png" as="image" type="image/png">
+    <link rel="preload" href="images/v2/xlcclo.png" as="image" type="image/png">
+    <link rel="preload" href="images/v2/xlalm.png" as="image" type="image/png">
+    <link rel="preload" href="images/v2/xlalert.png" as="image" type="image/png">
+    <link rel="preload" href="images/v2/xlext7.png" as="image" type="image/png">
+    <link rel="preload" href="images/v2/xl36h.png" as="image" type="image/png">
+    <link rel="preload" href="images/v2/dpf_today.png" as="image" type="image/png">
+    <link rel="preload" href="images/v2/dpf_tonight.png" as="image" type="image/png">
+    <link rel="preload" href="images/v2/dpf_tomorrow.png" as="image" type="image/png">
+    <link rel="preload" href="images/v2/us_radar_top.png" as="image" type="image/png">
+    <link rel="preload" href="images/v3/domestic.png" as="image" type="image/png">
+    <link rel="preload" href="images/v3/xlcc.png" as="image" type="image/png">
+    <link rel="preload" href="images/v3/xlcclo.png" as="image" type="image/png">
+    <link rel="preload" href="images/v3/xlalm.png" as="image" type="image/png">
+    <link rel="preload" href="images/v3/xlalert.png" as="image" type="image/png">
+    <link rel="preload" href="images/v3/xlext7.png" as="image" type="image/png">
+    <link rel="preload" href="images/v3/xl36h.png" as="image" type="image/png">
+    <link rel="preload" href="images/v3/dpf_today.png" as="image" type="image/png">
+    <link rel="preload" href="images/v3/dpf_tonight.png" as="image" type="image/png">
+    <link rel="preload" href="images/v3/dpf_tomorrow.png" as="image" type="image/png">
+    <link rel="preload" href="images/v3/us_radar_top.png" as="image" type="image/png">
     <link rel="preload" href="images/mistlogo2025.png" as="image" type="image/png">
     <link rel="preload" href="images/jwx.svg" as="image" type="image/svg">
     <!--Icons (too many so I chose 20 to preload)-->
@@ -121,6 +132,7 @@
         <div class="ldlwarning" style="display: none;">WARNING: Both will only work if the flavor is 120 seconds.</div>
 
         <button class="songbutton" onclick="songSettings('in')">Song Settings</button>
+        <button class="versionsbutton" onclick="versionSettings('in', 'vv')">Versions</button>
         <!--Start Button-->
         <button class="start-button" onclick="startButton()">Start</button>
         <h3 id="promo">Created by</h3>
@@ -150,11 +162,20 @@
             <option value="15">Beach Frolic</option>
         </select>
         <h1 class="offsetlabel">Offset:</h1>
-        <h3 class="offsetwarning">NOTE: The sim waits 4 seconds before starting &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If you want to play a song 20 seconds in, start at 16</h3>
         <h1 class="uploadsonglabel">Upload Song:</h1>
         <input type="number" class="input" id="songoffset" autocomplete="off" placeholder="0">
         <button class="songback" onclick="songSettings('out')">Back</button>
         <input id="songuploadinput" type="file" name="song" accept="audio/*">
+    </div>
+    <div id="version-settings" class="container" style="display: none;">
+        <div class="v1pic"></div>
+        <button class="v1button" onclick="versionSettings(null, 'v1')">v1</button>
+        <div class="v2pic"></div>
+        <button class="v2button" onclick="versionSettings(null, 'v2')">v2</button>
+        <div class="v3pic"></div>
+        <button class="v3button" onclick="versionSettings(null, 'v3')">v3</button>
+        <div class="versionwarning" style="display: none;">V1 is in the works!</div>
+        <button class="versionback" onclick="versionSettings('out', 'vv')">Back</button>
     </div>
     <div id="main" class="container">
         <div class="date-time" id="date" style="display:none;"></div>
@@ -320,6 +341,9 @@
                     </div>
                 </div>
                 <div class="noreport" style="display: none;">No Data Available</div>
+            </div>
+            <div class="extended-forecast" style="display: none;">
+
             </div>
             <div class="daypart-forecast" style="display: none; background-image: url(images/dpf_tomorrow.png);">
                 <div class="city-name"></div>

@@ -112,7 +112,7 @@ function displayLDL(idx){
         },
         precipitation(){
             $('.ldl .lower-text.right').fadeOut(0);
-            $('.ldl .lower-text.left .label').text(new Date().toString().split(" ")[1] + " Precipitation");
+            $('.ldl .lower-text.left .label').text(new Date().toLocaleDateString('en-US', {month: 'long'}) + " Precipitation");
             $('.ldl .lower-text.left .cond').text(weatherInfo.monthlyPrecip);
             if(appearanceSettings.aspectRatio == 3/2){
                 $('.ldl .lower-text.left .cond').css('padding-left', '270px');

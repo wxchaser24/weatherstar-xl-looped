@@ -144,7 +144,7 @@ function grabData() {
     weatherInfo.almanac.days = [];
     var url = "https://api.weather.com/v3/wx/forecast/daily/7day?geocode=" + locationConfig.mainCity.lat + "," + locationConfig.mainCity.lon + "&format=json&units=e&language=en-US&apiKey=" + api_key;
     $.getJSON(url, function (data) {
-      var dayOfWeek = { 0: "Monday", 1: "Tuesday", 2: "Wednesday", 3: "Thursday", 4: "Friday", 5: "Saturday", 6: "Sunday" }
+      var dayOfWeek = { "-1": "Sunday", 0: "Monday", 1: "Tuesday", 2: "Wednesday", 3: "Thursday", 4: "Friday", 5: "Saturday", 6: "Sunday" }
       //36 HOUR
       for (var i = (data.daypart[0].daypartName[0] === null ? 1 : 0); i < (data.daypart[0].daypartName[0] === null ? 4 : 3); i++) {
         var dayDescToAdd = {
@@ -341,12 +341,14 @@ function grabData() {
 }
 
 function startProgram(){
-  audioPlayer.startPlaying(audioPlayer.playlist, true);
   setTimeout(() => {
     grabData();
     createMaps();
     initializeRadar(locradar);
   }, 3000)
+  setTimeout(() => {
+    audioPlayer.startPlaying(audioPlayer.playlist, true);
+  }, appearanceSettings.startupTime - 500);
   setTimeout(() => {
     $('.date-time').fadeIn(0);
     slideKickOff()

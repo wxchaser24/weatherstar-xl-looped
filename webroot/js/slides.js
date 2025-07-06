@@ -20,6 +20,7 @@ var slideHeaders = {
 
 var currentProgram;
 var currentDiv;
+var animationDelay = appearanceSettings.graphicsPackage == "v3" ? 900 : 1000;
 
 function slideKickOff() {
     idx = 0;
@@ -57,7 +58,7 @@ function showSlides() {
                     $('.current-conditions .city-name').fadeIn(0);
                     $('.current-conditions .labels').fadeIn(0);
                     $('.current-conditions .information').fadeIn(0);
-                }, 900);
+                }, animationDelay);
                 setTimeout(() => {
                     $('.current-conditions').fadeOut(0);
                     slideCallBack();
@@ -109,7 +110,7 @@ function showSlides() {
                 setTimeout(() => {
                     $('.eight-cities .information').fadeIn(0);
                     $('.eight-cities .top').fadeIn(0);
-                }, 900);
+                }, animationDelay);
                 if (weatherInfo.eightCities.cities.length > 4) {
                     setTimeout(() => {
                         eightSlideCount = 4;
@@ -185,7 +186,7 @@ function showSlides() {
                     $('.local-forecast .city-name').fadeIn(0);
                     $('.local-forecast .slide .period').fadeIn(0);
                     $('.local-forecast .slide .description').fadeIn(0);
-                }, 900)
+                }, animationDelay)
                 setTimeout(() => {
                     $('.local-forecast .slide .period').text(weatherInfo.dayDesc.days[1].name);
                     $('.local-forecast .slide .description').text(weatherInfo.dayDesc.days[1].desc);
@@ -295,7 +296,7 @@ function showSlides() {
                 if (weatherInfo.daypartForecast.noReport == true) {
                     throw new Error("Daypart forecast has no data");
                 }
-                $('.daypart-forecast').css("background-image", `url(images/dpf_${weatherInfo.daypartForecast.dayName}.png)`)
+                $('.daypart-forecast').css("background-image", `url(images/${appearanceSettings.graphicsPackage}/dpf_${weatherInfo.daypartForecast.dayName}.png)`)
                 $('.daypart-forecast').fadeIn(0);
                 $('.daypart-forecast .city-name').text(locationConfig.mainCity.displayname + " Area");
 
@@ -336,7 +337,7 @@ function showSlides() {
                 }, slideSettings.slideDelay);
             } catch (error) {
                 console.error(error);
-                $('.daypart-forecast').css("background-image", `url(images/dpf_${weatherInfo.daypartForecast.dayName}.png)`)
+                $('.daypart-forecast').css("background-image", `url(images/${appearanceSettings.graphicsPackage}/dpf_${weatherInfo.daypartForecast.dayName}.png)`)
                 $('.daypart-forecast').fadeIn(0);
                 $('.daypart-forecast .city-name').text(locationConfig.mainCity.displayname + " Area");
                 $('.daypart-forecast .noreport').fadeIn(0);
@@ -369,7 +370,7 @@ function showSlides() {
 
             setTimeout(() => {
                 $('.almanac .information').fadeIn(0);
-            }, 900);
+            }, animationDelay);
             setTimeout(() => {
                 $('.almanac').fadeOut(0);
                 slideCallBack();

@@ -154,7 +154,7 @@ function setAspectRatio(asp) {
         $('.asp.three-two-button').css("color", "");
 
         $("#styles").empty();
-        $("#styles").append(`<link rel="stylesheet" href="wxstarxl43.css">`);
+        $("#styles").append(`<link rel="stylesheet" href="wxstarxl43${appearanceSettings.graphicsPackage}.css">`);
     } else if (asp == 3 / 2) {
         appearanceSettings.aspectRatio = 3 / 2;
         $('.asp.three-two-button').css("background-color", "#323741");
@@ -164,7 +164,7 @@ function setAspectRatio(asp) {
         $('.asp.four-three-button').css("color", "");
 
         $("#styles").empty();
-        $("#styles").append(`<link rel="stylesheet" href="wxstarxl32.css">`);
+        $("#styles").append(`<link rel="stylesheet" href="wxstarxl32${appearanceSettings.graphicsPackage}.css">`);
     }
 }
 
@@ -297,4 +297,36 @@ function songSettings(fade) {
             $("#settings-menu-content").fadeIn(500);
         }, 500);
     }
+}
+
+function versionSettings(fade, version){
+    if(fade == "in"){
+        $("#settings-menu-content").fadeOut(500);
+        setTimeout(() => {
+            $("#version-settings").fadeIn(500);
+        }, 500);
+    }
+    if (fade == "out") {
+        $("#version-settings").fadeOut(500);
+        setTimeout(() => {
+            $("#settings-menu-content").fadeIn(500);
+        }, 500);
+    }
+    if(version == "vv"){return;}
+
+    if(version == "v1"){
+        $(".versionwarning").fadeIn(0);
+        setTimeout(() => {
+            $(".versionwarning").fadeOut(500);
+        }, 4000);
+        return;
+    }
+    if(appearanceSettings.aspectRatio == 3/2){
+        $("#styles").empty();
+        $("#styles").append(`<link rel="stylesheet" href="wxstarxl32${version}.css">`);
+    } else if(appearanceSettings.aspectRatio == 4/3){
+        $("#styles").empty();
+        $("#styles").append(`<link rel="stylesheet" href="wxstarxl43${version}.css">`);
+    }
+    appearanceSettings.graphicsPackage = version;
 }

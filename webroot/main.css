@@ -84,8 +84,9 @@ body, html {
 }
 #settings-menu .bg {
     filter: blur(4px);
+    background-size: 100% 100% !important;
 }
-#settings-menu-content, #song-settings {
+#settings-menu-content, #song-settings, #version-settings {
     position: absolute;
     width: 1000px;
     height: 500px;
@@ -105,14 +106,14 @@ body, html {
     top: 165px;
     filter: drop-shadow(2px 2px 5px #000);
 }
-#settings-menu-content button, #song-settings button, .butn {
+#settings-menu-content button, #song-settings button, #version-settings button {
     position: absolute;
     font-family: "AG Bold Ex";
     color: #debd69;
     background-color: #232731;
     pointer-events: auto !important;
 }
-#settings-menu-content button:hover, #song-settings button:hover, .butn:hover {
+#settings-menu-content button:hover, #song-settings button:hover, #version-settings button:hover {
     background-color: #323741;
     color: #d4d4d4;
     cursor: pointer;
@@ -261,7 +262,7 @@ body, html {
     margin-left: 10.8%;
     margin-top: 225px;
 }
-.songbutton, #songuploadinput {
+.songbutton, #songuploadinput, .versionsbutton {
     position: absolute;
     font-size: 30px;
     width: 300px;
@@ -269,6 +270,48 @@ body, html {
     margin-left: 30px;
     height: 45px;
     z-index: 1000;
+}
+.v1button, .v2button, .v3button {
+    position: absolute;
+    font-size: 30px;
+    width: 270px;
+    margin-top: 300px;
+    margin-left: 30px;
+    height: 45px;
+    z-index: 1000;
+}
+.v2button {
+    margin-left: 360px;
+}
+.v3button {
+    margin-left: 690px;
+}
+.v1pic, .v2pic, .v3pic {
+    position: absolute;
+    width: 270px;
+    height: 180px;
+    background-size: 100% 100%;
+    margin-left: 30px;
+    margin-top: 80px;
+    border-radius: 10px;
+    filter: drop-shadow(2px 4px 6px #000);
+}
+.v1pic {
+    background-image: url(images/v1/domestic.png);
+}
+.v2pic {
+    background-image: url(images/v2/domestic.png);
+    margin-left: 360px;
+}
+.v3pic {
+    background-image: url(images/v3/domestic.png);
+    margin-left: 690px;
+}
+.v1pic:hover, .v2pic:hover, .v3pic:hover {
+    filter: drop-shadow(2px 4px 6px #304976);
+}
+.versionsbutton {
+    margin-left: 650px;
 }
 #songuploadinput {
     margin-top: 225px;
@@ -330,7 +373,7 @@ body, html {
     top: 20px;
     left: 20px;
 }
-.songback {
+.songback, .versionback {
     position: absolute;
     width: 240px;
     height: 70px;
@@ -338,4 +381,12 @@ body, html {
     font-size: 48px;
     margin-left: 370px;
     margin-top: 390px;
+}
+.versionwarning {
+    position: absolute;
+    margin-left: 55px;
+    margin-top: 347px;
+    color: gold;
+    text-shadow: 2px 2px #000;
+    font-size: 24px;
 }

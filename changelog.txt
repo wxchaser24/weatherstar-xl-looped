@@ -1,4 +1,11 @@
 Make sure to report any bugs or issues in the Issues tab!
+= JULY 5, 2025 | VERSION 1.2 =
+ -  Added v2 graphics
+ -  Added versions panel to switch between graphics
+ -  Fixed Weather Star XL logo not being centered in 4:3
+ -  Song starts at the beginning of the local forecast instead of when you hit the start button
+ -  Fixed undefined bug with local forecast day name
+ -  Changed month name to be full instead of abbreviated
 = JULY 5, 2025 | VERSION 1.1 =
  -  Added new song settings page
  -  You can now upload a song of your choice
