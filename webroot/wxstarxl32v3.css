@@ -30,6 +30,7 @@
     width: 1620px;
     height: 1080px;
     pointer-events: none;
+    background-size: 100% 100%;
 }
 
 .current-conditions {

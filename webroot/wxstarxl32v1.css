@@ -29,6 +29,7 @@
     background-image: url(images/v1/domestic.png);
     width: 1620px;
     height: 1080px;
+    background-size: 100% 100%;
     pointer-events: none;
 }
 
