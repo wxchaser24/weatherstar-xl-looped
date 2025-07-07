@@ -11,7 +11,7 @@ var appearanceSettings = {
     ldlType: '', //what you want to see on ldl. 'observations' = only observations / 'crawl' = only local ad sales / 'both' = both but only will fit during the two minute flavor
     startupTime: 4000, //How long you want to wait for it to start up.
     graphicsPackage: ["v2","v3"][Math.round(Math.random())],
-    version: "1.21"
+    version: "1.22"
 }
 
 var slideSettings = {

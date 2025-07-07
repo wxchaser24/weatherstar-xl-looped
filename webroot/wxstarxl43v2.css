@@ -312,7 +312,7 @@ font-family: 'AG Bold Ex';
 .week-ahead .day .icon {
     background-repeat: no-repeat;
     background-position: 51.35% 77.5%;
-    width: 72px;
+    width: 74px;
     height: 70px;
     position: absolute;
     transform: translate(0, -47.5px);
@@ -322,7 +322,7 @@ font-family: 'AG Bold Ex';
 .week-ahead .day {
 position: absolute;
     text-align: center;
-    margin-left: -78px;
+    margin-left: -80px;
     margin-top: 140px;
     width: 80px;
     height: 250px;
@@ -380,8 +380,10 @@ position: absolute;
 .week-ahead .day .high, .low {
     position: absolute;
     font-size: 36px;
-    margin-left: 16px;
+    margin-left: 1px;
     text-shadow: 1px 1px #000;
+    width: inherit;
+    text-align: center;
 }
 .week-ahead .day .high {
     margin-top: 167px;

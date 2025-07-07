@@ -1,4 +1,7 @@
 Make sure to report any bugs or issues in the Issues tab!
+= JULY 6, 2025 | VERSION 1.22 =
+ -  Changed bug where bulletin would display nothing instead of skip
+ -  Centered text for the week ahead slide
 = JULY 6, 2025 | VERSION 1.21 = 
  -  Changing versions/aspect ratios won't cause the sim to flicker as bad as before
  -  When sim is reloaded or accessed, a random graphics package is selected, compared to it being hard coded

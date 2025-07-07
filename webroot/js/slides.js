@@ -377,7 +377,7 @@ function showSlides() {
             }, slideSettings.slideDelay);
         },
         bulletin() {
-            if (weatherInfo.bulletin.enabled == false) {
+            if (weatherInfo.bulletin.enabled == false || weatherInfo.bulletin.alerts.length == 0) {
                 slideCallBack();
             } else {
                 $('.bulletin').fadeIn(0);

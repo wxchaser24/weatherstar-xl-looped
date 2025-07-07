@@ -364,8 +364,10 @@
 .week-ahead .day .high, .low {
     position: absolute;
     font-size: 36px;
-    margin-left: 15px;
+    margin-left: 1px;
     text-shadow: 1px 1px #000;
+    text-align: center;
+    width: inherit;
 }
 .week-ahead .day .high {
     margin-top: 167px;
