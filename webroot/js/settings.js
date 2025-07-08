@@ -55,7 +55,10 @@ function locSearch() {
             .text(locationConfig.mainCity.displayname + (locationConfig.mainCity.state != null ? ", " + locationConfig.mainCity.state : (locationConfig.mainCity.stateFull != null ? ", " + locationConfig.mainCity.stateFull : '')));
         shrinkLocDisplayName();
         $('.locsuccess').fadeIn(0);
-        setTimeout(() => { $('.locsuccess').fadeOut(1000); }, 2500)
+        setTimeout(() => { 
+            $('.locsuccess').fadeOut(1000);
+            grabData();
+        }, 2500)
     }, 1500)
 }
 

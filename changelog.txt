@@ -1,4 +1,7 @@
 Make sure to report any bugs or issues in the Issues tab!
+= JULY 7, 2025 | VERSION 1.23 =
+ -  Weather data is grabbed earlier to prevent no report screen on current conditions
+ -  Fixed bug that crashed sim when searching for thunderstorm icon
 = JULY 6, 2025 | VERSION 1.22 =
  -  Changed bug where bulletin would display nothing instead of skip
  -  Centered text for the week ahead slide

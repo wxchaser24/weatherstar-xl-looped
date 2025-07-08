@@ -129,11 +129,11 @@ function grabData() {
         weatherInfo.eightCities.cities.push(eightslideloc)
       })
     }).fail(function () {
-      weatherInfo.eightCities.noReport = true;
       for (var i = 0; i < 8; i++) {
         var eightslideNR = { name: locationConfig.eightCities.cities[i].displayname, temp: "", icon: 4400, wind: "", windspeed: "" }
         weatherInfo.eightCities.cities.push(eightslideNR)
       }
+      weatherInfo.eightCities.noReport = true;
     })
     //console.log(weatherInfo.eightCities);
   }
@@ -341,8 +341,8 @@ function grabData() {
 }
 
 function startProgram(){
+  grabData()
   setTimeout(() => {
-    grabData();
     createMaps();
     initializeRadar(locradar);
   }, 3000)
