@@ -118,7 +118,7 @@ body, html {
     color: #d4d4d4;
     cursor: pointer;
 }
-.aspectratio, .locname, .locdisplayname, .flavortype, .ldltype, .songchoice, .songback, .offsetlabel, .uploadsonglabel {
+.aspectratio, .locname, .locdisplayname, .flavortype, .ldltype, .modetype, .songchoice, .songback, .offsetlabel, .uploadsonglabel {
     font-family: "AG Bold Ex";
     position: absolute;
     font-size: 30px;
@@ -141,6 +141,9 @@ body, html {
 }
 .ldltype {
     margin-top: 270px;
+}
+.modetype {
+    margin-top: 330px;
 }
 #loclookup {
     font-family: "Akzidenz Bold";
@@ -215,6 +218,11 @@ body, html {
 .ldlbut.both-button {
     margin-left: 670px;
     width: 160px;
+}
+.ldlbut.loop-button {
+    margin-top: 328px;
+    margin-left: 250px;
+    width: 300px;
 }
 .ldlwarning, .offsetwarning {
     position: absolute;
@@ -389,4 +397,18 @@ body, html {
     color: gold;
     text-shadow: 2px 2px #000;
     font-size: 24px;
+}
+
+/* Disabled flavor button styling */
+.flv:disabled {
+    background-color: #555 !important;
+    color: #888 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
+.flv:disabled:hover {
+    background-color: #555 !important;
+    color: #888 !important;
+    cursor: not-allowed !important;
 }
