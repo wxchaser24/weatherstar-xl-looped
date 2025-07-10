@@ -228,9 +228,18 @@ body, html {
     position: absolute;
     text-shadow: 2px 2px #000;
     margin-top: 320px;
-    margin-left: 540px;
+    margin-left: 600px;
     color: gold;
     width: 270px;
+}
+.ldl-warning-60sec {
+    position: absolute;
+    text-shadow: 2px 2px #000;
+    margin-top: 320px;
+    margin-left: 560px;
+    color: gold;
+    width: 400px;
+    font-size: 14px;
 }
 .offsetwarning {
     margin-top: 150px;
