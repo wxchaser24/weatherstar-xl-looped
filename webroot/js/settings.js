@@ -281,6 +281,13 @@ function ldlBothCheck() {
 function setLDLType(type) {
     switch (type) {
         case 'observations':
+            // Check if 60-second flavor + loop mode is active
+            if (loopMode && slideSettings.flavor === 'D') {
+                // Show warning and don't change the setting
+                $('.ldl-warning-60sec').fadeIn(0);
+                setTimeout(() => { $('.ldl-warning-60sec').fadeOut(1000); }, 2500);
+                return;
+            }
             appearanceSettings.ldlType = 'observations';
             $('.ldlbut.obs-button').css("background-color", "#323741");
             $('.ldlbut.obs-button').css("color", "#ff0000");
@@ -375,28 +382,16 @@ var loopMode = false;
 
 function manageLDLRestrictions() {
     if (loopMode && slideSettings.flavor === 'D') {
-        // 60-second flavor in loop mode: disable observations, force crawl
-        $('.ldlbut.obs-button').prop('disabled', true);
-        $('.ldlbut.obs-button').css("background-color", "#555");
-        $('.ldlbut.obs-button').css("color", "#888");
-        $('.ldlbut.obs-button').css("cursor", "not-allowed");
-        
-        // Force crawl mode if observations is currently selected
+        // 60-second flavor in loop mode: force crawl mode if observations is currently selected
         if (appearanceSettings.ldlType === 'observations') {
             setLDLType('crawl');
         }
         
-        // Show warning message
-        $('.ldl-warning-60sec').show();
-        
-    } else {
-        // Not 60-second or not in loop mode: remove restrictions
-        $('.ldlbut.obs-button').prop('disabled', false);
-        $('.ldlbut.obs-button').css("background-color", "");
-        $('.ldlbut.obs-button').css("color", "");
-        $('.ldlbut.obs-button').css("cursor", "pointer");
-        $('.ldl-warning-60sec').hide();
+        // Show warning message with popup animation (same as other warnings)
+        $('.ldl-warning-60sec').fadeIn(0);
+        setTimeout(() => { $('.ldl-warning-60sec').fadeOut(1000); }, 2500);
     }
+    // Note: We don't disable the button anymore - it will be handled in setLDLType
 }
 
 function toggleLoop() {
@@ -427,12 +422,7 @@ function toggleLoop() {
         $('.loop-button').css("color", "");
         $('.loop-button').text("Enable Loop");
         
-        // Remove any LDL restrictions when exiting loop mode
-        $('.ldlbut.obs-button').prop('disabled', false);
-        $('.ldlbut.obs-button').css("background-color", "");
-        $('.ldlbut.obs-button').css("color", "");
-        $('.ldlbut.obs-button').css("cursor", "pointer");
-        $('.ldl-warning-60sec').hide();
+        // No need to remove restrictions since button was never disabled
         
         // Reset styling based on current flavor
         updateFlavorButtonStyling();
