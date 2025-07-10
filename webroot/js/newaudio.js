@@ -22,19 +22,33 @@ class AudioManager {
     }
 
     playCC(vl) {
-        if(vl){
-            this.startPlaying(this.vocallocal, false);
-        } else{
-            this.startPlaying(['narrations/Your_current_conditions.mp3'], false)
+        try {
+            if(vl && this.vocallocal && this.vocallocal.length > 0){
+                this.startPlaying(this.vocallocal, false);
+            } else{
+                this.startPlaying(['narrations/Your_current_conditions.mp3'], false)
+            }
+        } catch (error) {
+            console.error("Error in playCC:", error);
+            // Fallback to default narration
+            this.startPlaying(['narrations/Your_current_conditions.mp3'], false);
         }
     }
 
     playLF() {
-        this.startPlaying(['narrations/The_forecast_for_your_area.mp3'], false)
+        try {
+            this.startPlaying(['narrations/The_forecast_for_your_area.mp3'], false)
+        } catch (error) {
+            console.error("Error in playLF:", error);
+        }
     }
 
     playEF() {
-        this.startPlaying(['narrations/Your_extended_forecast.mp3'], false)
+        try {
+            this.startPlaying(['narrations/Your_extended_forecast.mp3'], false)
+        } catch (error) {
+            console.error("Error in playEF:", error);
+        }
     }
 
     playWarningBeep() {
@@ -49,8 +63,15 @@ class AudioManager {
     }
 
     startPlaying(arr, loop) {
-        var audioType = loop ? 'music' : 'voice'
-        if (this.$players.find(`.${audioType}`).length > 0) return;
+        try {
+            var audioType = loop ? 'music' : 'voice'
+            if (this.$players.find(`.${audioType}`).length > 0) return;
+            
+            // Ensure we have a valid array
+            if (!arr || !Array.isArray(arr) || arr.length === 0) {
+                console.warn("Invalid audio array provided to startPlaying");
+                return;
+            }
 
         var current = -1
         const len = arr.length;
@@ -121,9 +142,12 @@ class AudioManager {
             this.$players.find('.music').jPlayer('volume', 0);
         }
 
-        this.playCallback = {}
-        $preloader.jPlayer('setMedia', { mp3: arr[0] });
-        playNext();
+            this.playCallback = {}
+            $preloader.jPlayer('setMedia', { mp3: arr[0] });
+            playNext();
+        } catch (error) {
+            console.error("Error in startPlaying:", error);
+        }
     }
 
     stopPlaying() {

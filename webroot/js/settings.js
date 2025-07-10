@@ -55,10 +55,7 @@ function locSearch() {
             .text(locationConfig.mainCity.displayname + (locationConfig.mainCity.state != null ? ", " + locationConfig.mainCity.state : (locationConfig.mainCity.stateFull != null ? ", " + locationConfig.mainCity.stateFull : '')));
         shrinkLocDisplayName();
         $('.locsuccess').fadeIn(0);
-        setTimeout(() => { 
-            $('.locsuccess').fadeOut(1000);
-            grabData();
-        }, 2500)
+        setTimeout(() => { $('.locsuccess').fadeOut(1000); }, 2500)
     }, 1500)
 }
 
@@ -184,6 +181,17 @@ function setAspectRatio(asp) {
             $("#styles").children('link').first().remove();
         }, 10);
     }
+}
+
+function checkFlavorEnabled(flavor) {
+    // Check if we're in loop mode and trying to access 60 or 90 second flavors
+    if (loopMode && (flavor === 'd' || flavor === 'k')) {
+        // Show a warning or just ignore the click
+        console.log("60 and 90 second flavors are disabled in loop mode");
+        return;
+    }
+    // If not disabled, proceed with normal flavor setting
+    setFlavor(flavor);
 }
 
 function setFlavor(flavor) {
@@ -351,4 +359,93 @@ function versionSettings(fade, version){
         }, 10);
     }
     appearanceSettings.graphicsPackage = version;
+}
+
+// Global variable to track loop mode
+var loopMode = false;
+
+function toggleLoop() {
+    loopMode = !loopMode;
+    
+    if (loopMode) {
+        // Switch to looped versions
+        $('.loop-button').css("background-color", "#323741");
+        $('.loop-button').css("color", "#ff0000");
+        $('.loop-button').text("Disable Loop");
+        
+        // Disable 60 and 90 second flavors (gray them out)
+        $('.flv.onemin-button').prop('disabled', true);
+        $('.flv.ninetysec-button').prop('disabled', true);
+        $('.flv.onemin-button').css("background-color", "#555");
+        $('.flv.onemin-button').css("color", "#888");
+        $('.flv.ninetysec-button').css("background-color", "#555");
+        $('.flv.ninetysec-button').css("color", "#888");
+        $('.flv.onemin-button').css("cursor", "not-allowed");
+        $('.flv.ninetysec-button').css("cursor", "not-allowed");
+        
+        // If current flavor is 60 or 90 seconds, switch to 120 seconds
+        if (slideSettings.flavor === 'D' || slideSettings.flavor === 'K') {
+            setFlavor('m');
+        }
+        
+        // Remove current scripts
+        $('script[src="js/slides.js"]').remove();
+        $('script[src="js/ldl.js"]').remove();
+        
+        // Load looped versions
+        $('<script>').attr('src', 'js/slides_looped.js').appendTo('head');
+        $('<script>').attr('src', 'js/ldl_looped.js').appendTo('head');
+        
+        console.log("Switched to looped mode");
+    } else {
+        // Switch to original versions
+        $('.loop-button').css("background-color", "");
+        $('.loop-button').css("color", "");
+        $('.loop-button').text("Enable Loop");
+        
+        // Re-enable 60 and 90 second flavors
+        $('.flv.onemin-button').prop('disabled', false);
+        $('.flv.ninetysec-button').prop('disabled', false);
+        $('.flv.onemin-button').css("cursor", "pointer");
+        $('.flv.ninetysec-button').css("cursor", "pointer");
+        
+        // Reset styling based on current flavor
+        updateFlavorButtonStyling();
+        
+        // Remove looped scripts
+        $('script[src="js/slides_looped.js"]').remove();
+        $('script[src="js/ldl_looped.js"]').remove();
+        
+        // Load original versions
+        $('<script>').attr('src', 'js/slides.js').appendTo('head');
+        $('<script>').attr('src', 'js/ldl.js').appendTo('head');
+        
+        console.log("Switched to original mode");
+    }
+}
+
+function updateFlavorButtonStyling() {
+    // Reset all flavor buttons to default styling
+    $('.flv.onemin-button').css("background-color", "");
+    $('.flv.onemin-button').css("color", "");
+    $('.flv.ninetysec-button').css("background-color", "");
+    $('.flv.ninetysec-button').css("color", "");
+    $('.flv.twomin-button').css("background-color", "");
+    $('.flv.twomin-button').css("color", "");
+    
+    // Apply active styling based on current flavor
+    switch (slideSettings.flavor) {
+        case 'D':
+            $('.flv.onemin-button').css("background-color", "#323741");
+            $('.flv.onemin-button').css("color", "#ff0000");
+            break;
+        case 'K':
+            $('.flv.ninetysec-button').css("background-color", "#323741");
+            $('.flv.ninetysec-button').css("color", "#ff0000");
+            break;
+        case 'M':
+            $('.flv.twomin-button').css("background-color", "#323741");
+            $('.flv.twomin-button').css("color", "#ff0000");
+            break;
+    }
 }

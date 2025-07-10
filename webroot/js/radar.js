@@ -247,3 +247,17 @@ function stopRadar() {
   timestamps = [];
   clearInterval(radarAnimation);
 }
+
+async function updateRadarFrames() {
+    // Fetch new timestamps
+    const frameCount = 10; // Number of radar frames to fetch
+    loctimestamps = await fetchRadarTimestamps(locradar, frameCount);
+    
+    if (loctimestamps.length > 0) {
+        // Clean up old layers
+        cleanupOldRadarLayers(locradar, loctimestamps);
+        
+        // Add new radar layers
+        await addRadarLayers(locradar, loctimestamps);
+    }
+}
