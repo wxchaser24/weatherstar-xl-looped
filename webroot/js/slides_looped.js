@@ -29,6 +29,8 @@ var lastUpdateHour = null;
 // Global variables to track audio health
 var lastAudioPlayTime = Date.now();
 var audioFailureCount = 0;
+var lastSuccessfulAudioPlay = Date.now();
+var audioPlayAttempts = 0;
 
 // Function to monitor alert status and manage bulletin crawl
 function monitorAlertStatus() {
@@ -105,24 +107,79 @@ function monitorTimeChanges() {
 function monitorAudioHealth() {
     setInterval(() => {
         checkAndRecoverAudio();
-    }, 180000); // Check every 3 minutes (more frequent)
+    }, 60000); // Check every minute
     
-    // Also do an immediate check after a delay to ensure audio is working
-    setTimeout(() => {
-        checkAndRecoverAudio();
-    }, 30000); // Initial check after 30 seconds
-    
-    // Additional aggressive monitoring for very long runs
+    // More aggressive monitoring for long runs
     setInterval(() => {
-        // Force audio player recreation every 2 hours as preventive measure
-        const timeSinceLastAudio = Date.now() - lastAudioPlayTime;
-        if (timeSinceLastAudio > 7200000) { // 2 hours
-            console.log("Preventive audio player recreation after 2+ hours");
-            window.audioPlayer = new AudioManager();
-            lastAudioPlayTime = Date.now();
-            audioFailureCount = 0;
+        const timeSinceLastSuccess = Date.now() - lastSuccessfulAudioPlay;
+        if (timeSinceLastSuccess > 1800000) { // 30 minutes without successful playback
+            console.log("No successful audio playback in 30 minutes - forcing recreation");
+            recreateAudioSystem(true);
         }
-    }, 600000); // Check every 10 minutes for long-term recreation
+    }, 300000); // Check every 5 minutes
+}
+
+// Function to recreate audio system while preserving music state
+function recreateAudioSystem(force = false) {
+    try {
+        // Store current music state
+        var musicWasPlaying = false;
+        var musicVolume = 0.8;
+        var currentTrack = null;
+        
+        if (window.audioPlayer && window.audioPlayer.$players) {
+            const musicPlayers = window.audioPlayer.$players.find('.music');
+            if (musicPlayers.length > 0) {
+                musicPlayers.each(function() {
+                    var playerData = $(this).data('jPlayer');
+                    if (playerData && !playerData.status.paused) {
+                        musicWasPlaying = true;
+                        musicVolume = playerData.options.volume;
+                        currentTrack = playerData.status.src;
+                    }
+                });
+            }
+        }
+
+        // Clean up existing audio system
+        if (window.audioPlayer) {
+            window.audioPlayer.$players.find('.jplayer').each(function() {
+                try {
+                    $(this).jPlayer('destroy');
+                } catch (e) {
+                    console.warn("Error destroying player:", e);
+                }
+            });
+            window.audioPlayer.$players.remove();
+        }
+
+        // Create new audio system
+        window.audioPlayer = new AudioManager();
+        
+        // Restore music if it was playing
+        if (musicWasPlaying && audioSettings.enableMusic) {
+            setTimeout(() => {
+                if (window.audioPlayer.playlist && window.audioPlayer.playlist.length > 0) {
+                    window.audioPlayer.startPlaying(window.audioPlayer.playlist, true);
+                    // Restore volume after a short delay
+                    setTimeout(() => {
+                        window.audioPlayer.$players.find('.music').jPlayer('volume', musicVolume);
+                    }, 500);
+                }
+            }, 1000);
+        }
+
+        // Reset counters
+        lastAudioPlayTime = Date.now();
+        audioFailureCount = 0;
+        audioPlayAttempts = 0;
+        
+        console.log("Audio system recreated successfully");
+        return true;
+    } catch (error) {
+        console.error("Failed to recreate audio system:", error);
+        return false;
+    }
 }
 
 // Check audio player health and recover if needed
@@ -218,10 +275,11 @@ function checkAndRecoverAudio() {
     }
 }
 
-// Enhanced audio playback with fallback and retry
+// Enhanced audio playback with verification
 function playAudioSafely(type, vocalLocal = false) {
     const maxRetries = 3;
     let retryCount = 0;
+    audioPlayAttempts++;
     
     function attemptPlay() {
         try {
@@ -229,6 +287,18 @@ function playAudioSafely(type, vocalLocal = false) {
                 throw new Error("Audio player not available");
             }
             
+            // Set up verification timeout
+            const verificationTimeout = setTimeout(() => {
+                console.log("Audio playback verification failed");
+                audioFailureCount++;
+                
+                if (audioFailureCount >= 3 || audioPlayAttempts >= 5) {
+                    console.log("Multiple audio failures detected - recreating system");
+                    recreateAudioSystem(true);
+                }
+            }, 2000);
+            
+            // Attempt playback
             switch(type) {
                 case 'cc':
                     audioPlayer.playCC(vocalLocal);
@@ -241,12 +311,32 @@ function playAudioSafely(type, vocalLocal = false) {
                     break;
                 default:
                     console.warn("Unknown audio type:", type);
+                    clearTimeout(verificationTimeout);
                     return;
             }
             
-            console.log(`Audio playback successful: ${type}`);
-            lastAudioPlayTime = Date.now();
-            audioFailureCount = 0; // Reset failure count on success
+            // Monitor for actual playback
+            const checkPlayback = setInterval(() => {
+                const activePlayers = audioPlayer.$players.find('.voice');
+                let isPlaying = false;
+                
+                activePlayers.each(function() {
+                    const playerData = $(this).data('jPlayer');
+                    if (playerData && !playerData.status.paused && playerData.status.currentTime > 0) {
+                        isPlaying = true;
+                        clearTimeout(verificationTimeout);
+                        clearInterval(checkPlayback);
+                        lastSuccessfulAudioPlay = Date.now();
+                        audioFailureCount = 0;
+                        audioPlayAttempts = 0;
+                    }
+                });
+            }, 100);
+            
+            // Clear check after 3 seconds
+            setTimeout(() => {
+                clearInterval(checkPlayback);
+            }, 3000);
             
         } catch (error) {
             console.error(`Audio playback failed (attempt ${retryCount + 1}):`, error);
@@ -255,13 +345,10 @@ function playAudioSafely(type, vocalLocal = false) {
             
             if (retryCount < maxRetries) {
                 console.log(`Retrying audio playback in 1 second...`);
-                setTimeout(() => {
-                    // Try to recover audio player before retry
-                    checkAndRecoverAudio();
-                    setTimeout(attemptPlay, 500);
-                }, 1000);
+                setTimeout(attemptPlay, 1000);
             } else {
                 console.error(`Audio playback failed after ${maxRetries} attempts for: ${type}`);
+                recreateAudioSystem(true);
             }
         }
     }

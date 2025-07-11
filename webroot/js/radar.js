@@ -250,7 +250,7 @@ function stopRadar() {
 
 async function updateRadarFrames() {
     // Fetch new timestamps
-    const frameCount = 36; // Number of radar frames to fetch (same as initial setup)
+    const frameCount = 36; // Match initial setup frame count
     loctimestamps = await fetchRadarTimestamps(locradar, frameCount);
     
     if (loctimestamps.length > 0) {
