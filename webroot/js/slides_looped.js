@@ -408,12 +408,35 @@ function updateWeekAheadDayNames() {
 function slideKickOff() {
     idx = 0;
     nidx = 1;
+    // Preload all slide backgrounds
+    preloadSlideBackgrounds();
     showSlides();
     displayLDL(0);
-    monitorAlertStatus(); // Start monitoring alert status changes
-    monitorTimeChanges(); // Start monitoring time changes for forecast updates
-    monitorAudioHealth(); // Start monitoring audio player health
-}//end of slideKickOff() function
+    monitorAlertStatus();
+    monitorTimeChanges();
+    monitorAudioHealth();
+}
+
+function preloadSlideBackgrounds() {
+    // Create an array of all background images to preload
+    const backgrounds = [
+        `images/${appearanceSettings.graphicsPackage}/xlcc.png`,
+        `images/${appearanceSettings.graphicsPackage}/xlcclo.png`,
+        `images/${appearanceSettings.graphicsPackage}/xl36h.png`,
+        `images/${appearanceSettings.graphicsPackage}/xlext7.png`,
+        `images/${appearanceSettings.graphicsPackage}/us_radar_top.png`,
+        `images/${appearanceSettings.graphicsPackage}/xlalm.png`,
+        `images/${appearanceSettings.graphicsPackage}/xlalert.png`,
+        `images/${appearanceSettings.graphicsPackage}/dpf_today.png`,
+        `images/${appearanceSettings.graphicsPackage}/dpf_tomorrow.png`
+    ];
+
+    // Preload each background image
+    backgrounds.forEach(src => {
+        const img = new Image();
+        img.src = src + `?${Date.now()}`; // Add cache buster
+    });
+}
 
 function showSlides() {
     var slidePrograms = {
@@ -466,16 +489,8 @@ function showSlides() {
                     $('.current-conditions .information').fadeIn(0);
                 }, animationDelay);
                 setTimeout(() => {
-                    // Start next slide early to prevent black flash between CC and next slide
-                    if (slideSettings.order[nidx] && (slideSettings.order[nidx].function === 'nearbyCities' || slideSettings.order[nidx].function === 'dayDesc' || slideSettings.order[nidx].function === 'bulletin')) {
-                        slideCallBack();
-                        setTimeout(() => {
-                            $('.current-conditions').fadeOut(0);
-                        }, 10);
-                    } else {
-                        $('.current-conditions').fadeOut(0);
-                        slideCallBack();
-                    }
+                    $('.current-conditions').fadeOut(0);
+                    slideCallBack();
                 }, slideSettings.slideDelay)
             } catch (error) {
                 console.error(error);
@@ -488,16 +503,8 @@ function showSlides() {
                     $('.current-conditions .noreport').fadeIn(0);
                 }, 900);
                 setTimeout(() => {
-                    // Start next slide early to prevent black flash between CC and next slide
-                    if (slideSettings.order[nidx] && (slideSettings.order[nidx].function === 'nearbyCities' || slideSettings.order[nidx].function === 'dayDesc' || slideSettings.order[nidx].function === 'bulletin')) {
-                        slideCallBack();
-                        setTimeout(() => {
-                            $('.current-conditions').fadeOut(0);
-                        }, 10);
-                    } else {
-                        $('.current-conditions').fadeOut(0);
-                        slideCallBack();
-                    }
+                    $('.current-conditions').fadeOut(0);
+                    slideCallBack();
                 }, slideSettings.slideDelay)
             }
         },
