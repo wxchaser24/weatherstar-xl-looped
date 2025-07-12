@@ -1036,126 +1036,31 @@ function showSlides() {
         updateRadarFrames(); // Add this line to update radar frames each loop
         ldlIdx = 0;
         
-        // Reset audio player at the start of each loop to prevent audio degradation
-        console.log("Starting new loop - cleaning up audio player to prevent narration issues");
+        // Reset only narration system at start of each loop
+        console.log("Starting new loop - resetting narration system");
         try {
-            // Check if music is currently playing before reset
-            var musicWasPlaying = false;
-            var musicVolume = 0.8;
-            var currentTrackTime = 0;
-            var currentTrackIndex = 0;
-            
             if (window.audioPlayer && window.audioPlayer.$players) {
-                var musicPlayers = window.audioPlayer.$players.find('.music');
-                if (musicPlayers.length > 0) {
-                    // Check if any music player is actually playing
-                    musicPlayers.each(function() {
-                        var playerData = $(this).data('jPlayer');
-                        if (playerData && !playerData.status.paused && playerData.status.currentTime > 0) {
-                            musicWasPlaying = true;
-                            musicVolume = playerData.options.volume;
-                            currentTrackTime = playerData.status.currentTime;
-                            return false; // break out of each
-                        }
-                    });
-                }
-                
-                // Clean up only voice players and corrupted elements, keep music playing
-                window.audioPlayer.$players.find('.voice').jPlayer('destroy').remove();
-                
-                // Clean up any orphaned or stuck players
-                var allPlayers = window.audioPlayer.$players.find('.jplayer');
-                if (allPlayers.length > 4) { // Should only have 2 music + 2 voice max
-                    allPlayers.slice(4).jPlayer('destroy').remove();
-                }
-            }
-            
-            // Reset counters and timing
-            lastAudioPlayTime = Date.now();
-            audioFailureCount = 0;
-            
-            // If no music is playing but should be, start it
-            if (!musicWasPlaying && audioSettings.enableMusic && window.audioPlayer) {
-                setTimeout(() => {
-                    if (window.audioPlayer.playlist && window.audioPlayer.playlist.length > 0) {
-                        console.log("Starting music to enable ducking capability");
-                        window.audioPlayer.startPlaying(window.audioPlayer.playlist, true);
+                // Only destroy voice players, leave music untouched
+                window.audioPlayer.$players.find('.voice').each(function() {
+                    try {
+                        $(this).jPlayer('destroy');
+                    } catch (e) {
+                        console.warn("Error destroying voice player:", e);
                     }
-                }, 1000);
+                }).remove();
             }
-            
-        } catch (error) {
-            console.error("Error cleaning up audio player:", error);
-            // If cleanup fails, fall back to full recreation
-            try {
+
+            // Create new voice players while preserving music system
+            if (window.audioPlayer) {
+                window.audioPlayer.resetVoicePlayers();
+            } else {
+                // If no audio system exists at all, create it
                 window.audioPlayer = new AudioManager();
-                if (audioSettings.enableMusic) {
-                    setTimeout(() => {
-                        if (window.audioPlayer.playlist && window.audioPlayer.playlist.length > 0) {
-                            window.audioPlayer.startPlaying(window.audioPlayer.playlist, true);
-                        }
-                    }, 1000);
-                }
-            } catch (fallbackError) {
-                console.error("Fallback audio recreation also failed:", fallbackError);
             }
-        }
-        
-        // Check if alert status has changed and handle accordingly
-        if (!weatherInfo.bulletin.crawlAlert.enabled && warningCrawlEnabled) {
-            // Alerts have expired - hide warning crawl and show normal LDL
-            warningCrawlEnabled = false;
-            $('.ldl .warning-crawl').fadeOut(0);
-            $('.ldl .warning-crawl .marquee').marquee('destroy');
-            $('.ldl').fadeIn(0);
-            displayLDL(ldlIdx);
-        } else if (weatherInfo.bulletin.crawlAlert.enabled && !warningCrawlEnabled) {
-            // New alerts have become active - show warning crawl
-            $('.ldl').fadeOut(0);
-            displayLDL(ldlIdx); // This will activate the warning crawl
-        }
-        // If alert status hasn't changed, don't interrupt the current crawl state
-        
-        // Only manage normal LDL if no alerts are active
-        if (!weatherInfo.bulletin.crawlAlert.enabled) {
-            // Clear any existing LDL intervals
-            clearInterval(ldlInterval);
-            // Reset LDL elements to initial state
-            $('.ldl .upper-text').fadeOut(0);
-            $('.ldl .lower-text').fadeOut(0);
-            $('.ldl .lower-text.left .label').fadeOut(0);
-            $('.ldl .lower-text.left .cond').fadeOut(0);
-            $('.ldl .lower-text.left .cc').fadeOut(0);
-            $('.ldl .lower-text.right').fadeOut(0);
-            $('.ldl .lower-text.right .label').fadeOut(0);
-            $('.ldl .lower-text.right .cond').fadeOut(0);
-            $('.ldl .crawl').marquee('destroy');
-            $('.ldl .crawl').text("");
-            // Reset any custom padding
-            $('.ldl .lower-text.left .cond').css('padding-left', '');
-            
-            displayLDL(ldlIdx);
+        } catch (error) {
+            console.error("Failed to reset narration system:", error);
         }
 
-        // Reset daypart forecast elements
-        $(`.daypart-forecast .hour.i .temp`).css('margin-top', `315px`);
-        $(`.daypart-forecast .hour.ii .temp`).css('margin-top', `315px`);
-        $(`.daypart-forecast .hour.iii .temp`).css('margin-top', `315px`);
-        $(`.daypart-forecast .hour.iv .temp`).css('margin-top', `315px`);
-
-        $(`.daypart-forecast .hour.i .bar`).css('height', '5px');
-        $(`.daypart-forecast .hour.ii .bar`).css('height', '5px');
-        $(`.daypart-forecast .hour.iii .bar`).css('height', '5px');
-        $(`.daypart-forecast .hour.iv .bar`).css('height', '5px');
-
-        $(`.daypart-forecast .hour.i .temp`).fadeOut(0);
-        $(`.daypart-forecast .hour.ii .temp`).fadeOut(0);
-        $(`.daypart-forecast .hour.iii .temp`).fadeOut(0);
-        $(`.daypart-forecast .hour.iv .temp`).fadeOut(0);
-
-        // Clear accumulated elements that could cause duplication
-        $('.bulletin .alerts').empty();
-        
         // Reset all animated elements to their initial hidden states for proper transitions
         // Current Conditions
         $('.current-conditions .city-name').fadeOut(0);
