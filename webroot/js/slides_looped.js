@@ -408,8 +408,9 @@ function updateWeekAheadDayNames() {
 function slideKickOff() {
     idx = 0;
     nidx = 1;
-    // Preload all slide backgrounds
-    preloadSlideBackgrounds();
+    // Preload first two slides on startup
+    preloadNextSlide(slideSettings.order[idx].function);
+    preloadNextSlide(slideSettings.order[nidx].function);
     showSlides();
     displayLDL(0);
     monitorAlertStatus(); // Start monitoring alert status changes
@@ -417,40 +418,85 @@ function slideKickOff() {
     monitorAudioHealth(); // Start monitoring audio player health
 }//end of slideKickOff() function
 
-// Function to preload all slide backgrounds
-function preloadSlideBackgrounds() {
-    const slideBackgrounds = {
+// Function to get background URL for a slide type
+function getSlideBackground(slideType, dayName = null) {
+    const backgrounds = {
         currentConditions: `images/${appearanceSettings.graphicsPackage}/xlcc.png`,
         nearbyCities: `images/${appearanceSettings.graphicsPackage}/xlcclo.png`,
         dayDesc: `images/${appearanceSettings.graphicsPackage}/xl36h.png`,
         weekAhead: `images/${appearanceSettings.graphicsPackage}/xlext7.png`,
         dopplerRadar: `images/${appearanceSettings.graphicsPackage}/us_radar_top.png`,
         bulletin: `images/${appearanceSettings.graphicsPackage}/xlalert.png`,
-        almanac: `images/${appearanceSettings.graphicsPackage}/xlalm.png`
+        almanac: `images/${appearanceSettings.graphicsPackage}/xlalm.png`,
+        daypartForecast: `images/${appearanceSettings.graphicsPackage}/dpf_${dayName || 'today'}.png`
     };
+    return backgrounds[slideType];
+}
 
-    // Also preload daypart forecast backgrounds
-    const dpfBackgrounds = ['today', 'tomorrow'].map(day => 
-        `images/${appearanceSettings.graphicsPackage}/dpf_${day}.png`
-    );
+// Keep track of preloaded images
+window.preloadedImages = {};
 
-    // Create hidden image elements to preload all backgrounds
-    const preloadImages = [...Object.values(slideBackgrounds), ...dpfBackgrounds].map(src => {
-        const img = new Image();
-        img.src = src + '?' + Date.now(); // Add cache buster
-        return img;
-    });
+// Function to preload the next slide's background
+function preloadNextSlide(slideType) {
+    // Get the background URL for this slide type
+    let bgUrl = getSlideBackground(slideType);
+    if (!bgUrl) return;
 
-    // Store preloaded images to prevent garbage collection
-    window.preloadedSlideImages = preloadImages;
+    // Add cache buster
+    bgUrl = bgUrl + '?' + Date.now();
+
+    // Create new image object
+    const img = new Image();
+    img.onload = () => {
+        // Store the loaded image with timestamp
+        window.preloadedImages[slideType] = {
+            image: img,
+            timestamp: Date.now()
+        };
+    };
+    img.onerror = (error) => {
+        console.error(`Failed to preload image for ${slideType}:`, error);
+    };
+    img.src = bgUrl;
+
+    // If it's daypart forecast, also preload tomorrow's background
+    if (slideType === 'daypartForecast') {
+        const tomorrowBg = getSlideBackground(slideType, 'tomorrow') + '?' + Date.now();
+        const tomorrowImg = new Image();
+        tomorrowImg.onload = () => {
+            window.preloadedImages[slideType + '_tomorrow'] = {
+                image: tomorrowImg,
+                timestamp: Date.now()
+            };
+        };
+        tomorrowImg.src = tomorrowBg;
+    }
+}
+
+// Function to get preloaded image URL or fallback to direct URL
+function getPreloadedBackground(slideType, dayName = null) {
+    const key = dayName ? `${slideType}_${dayName}` : slideType;
+    const preloaded = window.preloadedImages[key];
+    
+    if (preloaded && preloaded.image && (Date.now() - preloaded.timestamp < 300000)) { // 5 minute cache
+        return preloaded.image.src;
+    }
+    
+    // If not preloaded or expired, return direct URL with cache buster
+    return getSlideBackground(slideType, dayName) + '?' + Date.now();
 }
 
 function showSlides() {
     var slidePrograms = {
         currentConditions() {
+            // Use preloaded image if available
             $(".current-conditions").css({
-                "background-image":`url(images/${appearanceSettings.graphicsPackage}/xlcc.png?${Date.now()})`
-            })
+                "background-image": `url(${getPreloadedBackground('currentConditions')})`
+            });
+            // Preload next slide's background
+            if (slideSettings.order[nidx]) {
+                preloadNextSlide(slideSettings.order[nidx].function);
+            }
             try {
                 if (weatherInfo.currentConditions.noReport == true) {
                     throw new Error("Current conditions displays no report available");
@@ -517,8 +563,12 @@ function showSlides() {
         },
         nearbyCities() {
             $(".eight-cities").css({
-                "background-image":`url(images/${appearanceSettings.graphicsPackage}/xlcclo.png?${Date.now()})`
-            })
+                "background-image": `url(${getPreloadedBackground('nearbyCities')})`
+            });
+            // Preload next slide's background
+            if (slideSettings.order[nidx]) {
+                preloadNextSlide(slideSettings.order[nidx].function);
+            }
             try {
                 if (weatherInfo.eightCities.noReport == true) {
                     throw new Error("Local observations do not have data");
@@ -650,8 +700,12 @@ function showSlides() {
         },
         dayDesc() {
             $(".local-forecast").css({
-                "background-image":`url(images/${appearanceSettings.graphicsPackage}/xl36h.png?${Date.now()})`
-            })
+                "background-image": `url(${getPreloadedBackground('dayDesc')})`
+            });
+            // Preload next slide's background
+            if (slideSettings.order[nidx]) {
+                preloadNextSlide(slideSettings.order[nidx].function);
+            }
             try {
                 if (weatherInfo.dayDesc.noReport == true) {
                     throw new Error("36hr forecast has no data");
@@ -731,8 +785,12 @@ function showSlides() {
         },
         weekAhead() {
             $(".week-ahead").css({
-                "background-image":`url(images/${appearanceSettings.graphicsPackage}/xlext7.png?${Date.now()})`
-            })
+                "background-image": `url(${getPreloadedBackground('weekAhead')})`
+            });
+            // Preload next slide's background
+            if (slideSettings.order[nidx]) {
+                preloadNextSlide(slideSettings.order[nidx].function);
+            }
             try {
                 if (weatherInfo.weekAhead.noReport == true) {
                     throw new Error("Week Ahead has no data");
@@ -788,8 +846,12 @@ function showSlides() {
         },
         dopplerRadar() {
             $(".radar").css({
-                "background-image":`url(images/${appearanceSettings.graphicsPackage}/us_radar_top.png?${Date.now()})`
-            })
+                "background-image": `url(${getPreloadedBackground('dopplerRadar')})`
+            });
+            // Preload next slide's background
+            if (slideSettings.order[nidx]) {
+                preloadNextSlide(slideSettings.order[nidx].function);
+            }
             try {
                 $('.radar').fadeIn(0);
                 // Hide elements for animation
@@ -843,10 +905,13 @@ function showSlides() {
                 if (weatherInfo.daypartForecast.noReport == true) {
                     throw new Error("Daypart forecast has no data");
                 }
-                $('.daypart-forecast').css("background-image", `url(images/${appearanceSettings.graphicsPackage}/dpf_${weatherInfo.daypartForecast.dayName}.png?${Date.now()})`)
-                $('.daypart-forecast').fadeIn(0);
-                $('.daypart-forecast .city-name').text(locationConfig.mainCity.displayname + " Area");
-
+                $('.daypart-forecast').css("background-image", 
+                    `url(${getPreloadedBackground('daypartForecast', weatherInfo.daypartForecast.dayName)})`
+                );
+                // Preload next slide's background
+                if (slideSettings.order[nidx]) {
+                    preloadNextSlide(slideSettings.order[nidx].function);
+                }
                 var barTemps = [
                     weatherInfo.daypartForecast.times[0].temp,
                     weatherInfo.daypartForecast.times[1].temp,
@@ -901,8 +966,12 @@ function showSlides() {
         },
         almanac() {
             $(".almanac").css({
-                "background-image":`url(images/${appearanceSettings.graphicsPackage}/xlalm.png?${Date.now()})`
-            })
+                "background-image": `url(${getPreloadedBackground('almanac')})`
+            });
+            // Preload next slide's background
+            if (slideSettings.order[nidx]) {
+                preloadNextSlide(slideSettings.order[nidx].function);
+            }
             $('.almanac').fadeIn(0);
                 // Hide elements for animation
                 $('.almanac .information').fadeOut(0);
@@ -939,8 +1008,12 @@ function showSlides() {
                 slideCallBack();
             } else {
                 $(".bulletin").css({
-                    "background-image":`url(images/${appearanceSettings.graphicsPackage}/xlalert.png?${Date.now()})`
-                })
+                    "background-image": `url(${getPreloadedBackground('bulletin')})`
+                });
+                // Preload next slide's background
+                if (slideSettings.order[nidx]) {
+                    preloadNextSlide(slideSettings.order[nidx].function);
+                }
                 $('.bulletin').fadeIn(0);
                 // Clear any existing bulletin alerts first
                 $('.bulletin .alerts').empty();
