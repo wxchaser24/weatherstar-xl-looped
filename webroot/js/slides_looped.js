@@ -428,7 +428,7 @@ function getSlideBackground(slideType, dayName = null) {
         dopplerRadar: `images/${appearanceSettings.graphicsPackage}/us_radar_top.png`,
         bulletin: `images/${appearanceSettings.graphicsPackage}/xlalert.png`,
         almanac: `images/${appearanceSettings.graphicsPackage}/xlalm.png`,
-        daypartForecast: `images/${appearanceSettings.graphicsPackage}/dpf_${dayName || 'today'}.png`
+        daypartForecast: `images/${appearanceSettings.graphicsPackage}/dpf_${dayName?.toLowerCase() || 'today'}.png`
     };
     return backgrounds[slideType];
 }
@@ -459,23 +459,27 @@ function preloadNextSlide(slideType) {
     };
     img.src = bgUrl;
 
-    // If it's daypart forecast, also preload tomorrow's background
+    // If it's daypart forecast, preload all variants
     if (slideType === 'daypartForecast') {
-        const tomorrowBg = getSlideBackground(slideType, 'tomorrow') + '?' + Date.now();
-        const tomorrowImg = new Image();
-        tomorrowImg.onload = () => {
-            window.preloadedImages[slideType + '_tomorrow'] = {
-                image: tomorrowImg,
-                timestamp: Date.now()
+        ['today', 'tonight', 'tomorrow'].forEach(variant => {
+            const variantBg = getSlideBackground(slideType, variant) + '?' + Date.now();
+            const variantImg = new Image();
+            variantImg.onload = () => {
+                window.preloadedImages[`${slideType}_${variant}`] = {
+                    image: variantImg,
+                    timestamp: Date.now()
+                };
             };
-        };
-        tomorrowImg.src = tomorrowBg;
+            variantImg.src = variantBg;
+        });
     }
 }
 
 // Function to get preloaded image URL or fallback to direct URL
 function getPreloadedBackground(slideType, dayName = null) {
-    const key = dayName ? `${slideType}_${dayName}` : slideType;
+    // For daypart forecast, map 'tonight' to 'today' for the background image
+    const adjustedDayName = dayName === 'tonight' ? 'today' : dayName;
+    const key = adjustedDayName ? `${slideType}_${adjustedDayName}` : slideType;
     const preloaded = window.preloadedImages[key];
     
     if (preloaded && preloaded.image && (Date.now() - preloaded.timestamp < 300000)) { // 5 minute cache
@@ -912,6 +916,8 @@ function showSlides() {
                 if (slideSettings.order[nidx]) {
                     preloadNextSlide(slideSettings.order[nidx].function);
                 }
+                $('.daypart-forecast').fadeIn(0);
+                $('.daypart-forecast .city-name').text(locationConfig.mainCity.displayname + " Area");
                 var barTemps = [
                     weatherInfo.daypartForecast.times[0].temp,
                     weatherInfo.daypartForecast.times[1].temp,
