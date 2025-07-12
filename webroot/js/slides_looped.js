@@ -1061,6 +1061,61 @@ function showSlides() {
             console.error("Failed to reset narration system:", error);
         }
 
+        // Check if alert status has changed and handle accordingly
+        if (!weatherInfo.bulletin.crawlAlert.enabled && warningCrawlEnabled) {
+            // Alerts have expired - hide warning crawl and show normal LDL
+            warningCrawlEnabled = false;
+            $('.ldl .warning-crawl').fadeOut(0);
+            $('.ldl .warning-crawl .marquee').marquee('destroy');
+            $('.ldl').fadeIn(0);
+            displayLDL(ldlIdx);
+        } else if (weatherInfo.bulletin.crawlAlert.enabled && !warningCrawlEnabled) {
+            // New alerts have become active - show warning crawl
+            $('.ldl').fadeOut(0);
+            displayLDL(ldlIdx); // This will activate the warning crawl
+        }
+        // If alert status hasn't changed, don't interrupt the current crawl state
+        
+        // Only manage normal LDL if no alerts are active
+        if (!weatherInfo.bulletin.crawlAlert.enabled) {
+            // Clear any existing LDL intervals
+            clearInterval(ldlInterval);
+            // Reset LDL elements to initial state
+            $('.ldl .upper-text').fadeOut(0);
+            $('.ldl .lower-text').fadeOut(0);
+            $('.ldl .lower-text.left .label').fadeOut(0);
+            $('.ldl .lower-text.left .cond').fadeOut(0);
+            $('.ldl .lower-text.left .cc').fadeOut(0);
+            $('.ldl .lower-text.right').fadeOut(0);
+            $('.ldl .lower-text.right .label').fadeOut(0);
+            $('.ldl .lower-text.right .cond').fadeOut(0);
+            $('.ldl .crawl').marquee('destroy');
+            $('.ldl .crawl').text("");
+            // Reset any custom padding
+            $('.ldl .lower-text.left .cond').css('padding-left', '');
+            
+            displayLDL(ldlIdx);
+        }
+
+        // Reset daypart forecast elements
+        $(`.daypart-forecast .hour.i .temp`).css('margin-top', `315px`);
+        $(`.daypart-forecast .hour.ii .temp`).css('margin-top', `315px`);
+        $(`.daypart-forecast .hour.iii .temp`).css('margin-top', `315px`);
+        $(`.daypart-forecast .hour.iv .temp`).css('margin-top', `315px`);
+
+        $(`.daypart-forecast .hour.i .bar`).css('height', '5px');
+        $(`.daypart-forecast .hour.ii .bar`).css('height', '5px');
+        $(`.daypart-forecast .hour.iii .bar`).css('height', '5px');
+        $(`.daypart-forecast .hour.iv .bar`).css('height', '5px');
+
+        $(`.daypart-forecast .hour.i .temp`).fadeOut(0);
+        $(`.daypart-forecast .hour.ii .temp`).fadeOut(0);
+        $(`.daypart-forecast .hour.iii .temp`).fadeOut(0);
+        $(`.daypart-forecast .hour.iv .temp`).fadeOut(0);
+
+        // Clear accumulated elements that could cause duplication
+        $('.bulletin .alerts').empty();
+
         // Reset all animated elements to their initial hidden states for proper transitions
         // Current Conditions
         $('.current-conditions .city-name').fadeOut(0);
