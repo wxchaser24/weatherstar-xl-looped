@@ -489,9 +489,8 @@ function preloadNextSlide(slideType) {
 
 // Function to get preloaded image URL or fallback to direct URL
 function getPreloadedBackground(slideType, dayName = null) {
-    // For daypart forecast, map 'tonight' to 'today' for the background image
-    const adjustedDayName = dayName === 'tonight' ? 'today' : dayName;
-    const key = adjustedDayName ? `${slideType}_${adjustedDayName}` : slideType;
+    // Use the actual dayName for background image lookup
+    const key = dayName ? `${slideType}_${dayName}` : slideType;
     const preloaded = window.preloadedImages[key];
     
     if (preloaded && preloaded.image && (Date.now() - preloaded.timestamp < 300000)) { // 5 minute cache
