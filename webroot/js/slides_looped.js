@@ -629,9 +629,7 @@ function showSlides() {
                             // Start next slide early to prevent black flash between 8 Cities and Bulletin
                             if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'bulletin') {
                                 slideCallBack();
-                                setTimeout(() => {
-                                    $('.eight-cities').fadeOut(0);
-                                }, 10);
+                                $('.eight-cities').fadeOut(0);
                             } else {
                                 $('.eight-cities').fadeOut(0);
                                 slideCallBack();
@@ -643,9 +641,7 @@ function showSlides() {
                         // Start next slide early to prevent black flash between 8 Cities and Bulletin
                         if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'bulletin') {
                             slideCallBack();
-                            setTimeout(() => {
-                                $('.eight-cities').fadeOut(0);
-                            }, 10);
+                            $('.eight-cities').fadeOut(0);
                         } else {
                             $('.eight-cities').fadeOut(0);
                             slideCallBack();
@@ -688,9 +684,7 @@ function showSlides() {
                                 // Start next slide early to prevent black flash between 8 Cities and Bulletin
                                 if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'bulletin') {
                                     slideCallBack();
-                                    setTimeout(() => {
-                                        $('.eight-cities').fadeOut(0);
-                                    }, 10);
+                                    $('.eight-cities').fadeOut(0);
                                 } else {
                                     $('.eight-cities').fadeOut(0);
                                     slideCallBack();
@@ -702,9 +696,7 @@ function showSlides() {
                             // Start next slide early to prevent black flash between 8 Cities and Bulletin
                             if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'bulletin') {
                                 slideCallBack();
-                                setTimeout(() => {
-                                    $('.eight-cities').fadeOut(0);
-                                }, 10);
+                                $('.eight-cities').fadeOut(0);
                             } else {
                                 $('.eight-cities').fadeOut(0);
                                 slideCallBack();
@@ -745,10 +737,10 @@ function showSlides() {
                     if (totalMinutes >= 185 && totalMinutes < 905) {
                         // 3:05 AM to 3:05 PM: Today, Tonight, Tomorrow's Day Name
                         labels = ["Today", "Tonight", tomorrowName];
-                    } else if (totalMinutes >= 905 && totalMinutes < 1325) {
+                    } else if (totalMinutes >= 905 && totalMinutes < 1320) {
                         // 3:05 PM to 10:05 PM: Tonight, Tomorrow's Day Name, Tomorrow Night
                         labels = ["Tonight", tomorrowName, tomorrowName + " Night"];
-                    } else if (totalMinutes >= 1325) {
+                    } else if (totalMinutes >= 1320) {
                         // 10:05 PM to 11:59 PM: Overnight, Tomorrow's Day Name, Tomorrow Night
                         labels = ["Overnight", tomorrowName, tomorrowName + " Night"];
                     } else {
@@ -899,21 +891,19 @@ function showSlides() {
                     // Start next slide early to prevent black flash between Radar and next slide
                     if (slideSettings.order[nidx] && (slideSettings.order[nidx].function === 'almanac' || slideSettings.order[nidx].function === 'currentConditions' || slideSettings.order[nidx].function === 'dayDesc')) {
                         slideCallBack();
-                        setTimeout(() => {
-                            $('#locradar').fadeOut(0);
-                            $('#locmap').fadeOut(0);
-                            $('.radar').fadeOut(0);
-                            $('.radar .banner').fadeOut(0);
-                            // Only show and resume LDL if no alert crawl is active
-                            if (!weatherInfo.bulletin.crawlAlert.enabled) {
-                                $('.ldl').fadeIn(0);
-                                resumeLDL(); // Resume LDL from where it left off
-                            } else {
-                                // Reset warning crawl z-index to normal
-                                $('.ldl').css('z-index', '8');
-                                $('.ldl .warning-crawl').css('z-index', '');
-                            }
-                        }, 10);
+                        $('#locradar').fadeOut(0);
+                        $('#locmap').fadeOut(0);
+                        $('.radar').fadeOut(0);
+                        $('.radar .banner').fadeOut(0);
+                        // Only show and resume LDL if no alert crawl is active
+                        if (!weatherInfo.bulletin.crawlAlert.enabled) {
+                            $('.ldl').fadeIn(0);
+                            resumeLDL(); // Resume LDL from where it left off
+                        } else {
+                            // Reset warning crawl z-index to normal
+                            $('.ldl').css('z-index', '8');
+                            $('.ldl .warning-crawl').css('z-index', '');
+                        }
                     } else {
                         $('#locradar').fadeOut(0);
                         $('#locmap').fadeOut(0);
@@ -1071,9 +1061,7 @@ function showSlides() {
                         // Start next slide early to prevent black flash when alerts expire
                         if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'dayDesc') {
                             slideCallBack();
-                            setTimeout(() => {
-                                $('.bulletin').fadeOut(0);
-                            }, 10);
+                            $('.bulletin').fadeOut(0);
                         } else {
                             $('.bulletin').fadeOut(0);
                             slideCallBack();
@@ -1088,9 +1076,7 @@ function showSlides() {
                         // Start next slide early to prevent black flash between Bulletin and next slide
                         if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'dayDesc') {
                             slideCallBack();
-                            setTimeout(() => {
-                                $('.bulletin').fadeOut(0);
-                            }, 10);
+                            $('.bulletin').fadeOut(0);
                         } else {
                             $('.bulletin').fadeOut(0);
                             slideCallBack();
