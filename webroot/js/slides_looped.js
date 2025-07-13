@@ -738,10 +738,10 @@ function showSlides() {
                         // 3:05 AM to 3:05 PM: Today, Tonight, Tomorrow's Day Name
                         labels = ["Today", "Tonight", tomorrowName];
                     } else if (totalMinutes >= 905 && totalMinutes < 1320) {
-                        // 3:05 PM to 10:05 PM: Tonight, Tomorrow's Day Name, Tomorrow Night
+                        // 3:05 PM to 10:00 PM: Tonight, Tomorrow's Day Name, Tomorrow Night
                         labels = ["Tonight", tomorrowName, tomorrowName + " Night"];
                     } else if (totalMinutes >= 1320) {
-                        // 10:05 PM to 11:59 PM: Overnight, Tomorrow's Day Name, Tomorrow Night
+                        // 10:00 PM to 11:59 PM: Overnight, Tomorrow's Day Name, Tomorrow Night
                         labels = ["Overnight", tomorrowName, tomorrowName + " Night"];
                     } else {
                         // 12:00 AM to 3:05 AM: Overnight, Today's Day Name, Today's Day Name + Night
