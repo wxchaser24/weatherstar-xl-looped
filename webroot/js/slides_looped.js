@@ -26,12 +26,6 @@ var animationDelay = appearanceSettings.graphicsPackage == "v3" ? 900 : 1000;
 var lastUpdateTime = null;
 var lastUpdateHour = null;
 
-// Global variables to track audio health
-var lastAudioPlayTime = Date.now();
-var audioFailureCount = 0;
-var lastSuccessfulAudioPlay = Date.now();
-var audioPlayAttempts = 0;
-
 // Function to monitor alert status and manage bulletin crawl
 function monitorAlertStatus() {
     setInterval(() => {
@@ -108,15 +102,6 @@ function monitorAudioHealth() {
     setInterval(() => {
         checkAndRecoverAudio();
     }, 60000); // Check every minute
-    
-    // More aggressive monitoring for long runs
-    setInterval(() => {
-        const timeSinceLastSuccess = Date.now() - lastSuccessfulAudioPlay;
-        if (timeSinceLastSuccess > 1800000) { // 30 minutes without successful playback
-            console.log("No successful audio playback in 30 minutes - forcing recreation");
-            recreateAudioSystem(true);
-        }
-    }, 300000); // Check every 5 minutes
 }
 
 // Function to recreate audio system while preserving music state
@@ -168,11 +153,6 @@ function recreateAudioSystem(force = false) {
                 }
             }, 1000);
         }
-
-        // Reset counters
-        lastAudioPlayTime = Date.now();
-        audioFailureCount = 0;
-        audioPlayAttempts = 0;
         
         console.log("Audio system recreated successfully");
         return true;
@@ -225,15 +205,6 @@ function checkAndRecoverAudio() {
             }
         }
         
-        // Check if audio hasn't played in a very long time or has too many failures
-        const timeSinceLastAudio = Date.now() - lastAudioPlayTime;
-        if (timeSinceLastAudio > 900000 || audioFailureCount > 5) { // 15 minutes or 5+ failures (more aggressive)
-            console.log(`Audio appears dead (${Math.round(timeSinceLastAudio/60000)}min since last play, ${audioFailureCount} failures), recreating player...`);
-            window.audioPlayer = new AudioManager();
-            audioFailureCount = 0;
-            lastAudioPlayTime = Date.now(); // Reset timer
-        }
-        
         // Ensure audio settings are still intact
         if (!audioSettings || !audioSettings.narrations) {
             console.log("Audio settings corrupted, reinitializing...");
@@ -279,7 +250,6 @@ function checkAndRecoverAudio() {
 function playAudioSafely(type, vocalLocal = false) {
     const maxRetries = 3;
     let retryCount = 0;
-    audioPlayAttempts++;
     
     function attemptPlay() {
         try {
@@ -290,10 +260,12 @@ function playAudioSafely(type, vocalLocal = false) {
             // Set up verification timeout
             const verificationTimeout = setTimeout(() => {
                 console.log("Audio playback verification failed");
-                audioFailureCount++;
-                
-                if (audioFailureCount >= 3 || audioPlayAttempts >= 5) {
-                    console.log("Multiple audio failures detected - recreating system");
+                if (retryCount < maxRetries) {
+                    console.log(`Retrying audio playback...`);
+                    retryCount++;
+                    attemptPlay();
+                } else {
+                    console.error(`Audio playback failed after ${maxRetries} attempts for: ${type}`);
                     recreateAudioSystem(true);
                 }
             }, 2000);
@@ -326,9 +298,6 @@ function playAudioSafely(type, vocalLocal = false) {
                         isPlaying = true;
                         clearTimeout(verificationTimeout);
                         clearInterval(checkPlayback);
-                        lastSuccessfulAudioPlay = Date.now();
-                        audioFailureCount = 0;
-                        audioPlayAttempts = 0;
                     }
                 });
             }, 100);
@@ -341,7 +310,6 @@ function playAudioSafely(type, vocalLocal = false) {
         } catch (error) {
             console.error(`Audio playback failed (attempt ${retryCount + 1}):`, error);
             retryCount++;
-            audioFailureCount++;
             
             if (retryCount < maxRetries) {
                 console.log(`Retrying audio playback in 1 second...`);
@@ -866,7 +834,7 @@ function showSlides() {
                 
                 // Only destroy and hide regular LDL if no alert crawl is active
                 if (!weatherInfo.bulletin.crawlAlert.enabled) {
-                    $('.ldl .crawl').marquee('destroy');
+                $('.ldl .crawl').marquee('destroy');
                     pauseLDL(); // Pause LDL instead of clearing interval
                     $('.ldl').fadeOut(0);
                 } else {

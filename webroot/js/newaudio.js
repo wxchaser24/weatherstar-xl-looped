@@ -231,9 +231,16 @@ class AudioManager {
                             console.log("Alert beep error - resetting state");
                             self.resetAlertState();
                         }
-                        // Restore music volume on error
-                        if (self.isDucking) {
-                            self.restoreMusicVolume();
+                        // Clean up players and restore music volume on error
+                        try {
+                            if (self.isDucking) {
+                                self.restoreMusicVolume();
+                            }
+                            // Clean up the failed players
+                            $player.jPlayer('destroy').remove();
+                            $preloader.jPlayer('destroy').remove();
+                        } catch (e) {
+                            console.warn("Error cleaning up after audio error:", e);
                         }
                     }
                 });
@@ -268,15 +275,25 @@ class AudioManager {
                     }
                 } catch (error) {
                     console.error("Error in playNext:", error);
-                    // Restore music volume on error
-                    if (self.isDucking) {
-                        self.restoreMusicVolume();
+                    // Clean up and restore music volume on error
+                    try {
+                        if (self.isDucking) {
+                            self.restoreMusicVolume();
+                        }
+                        $player.jPlayer('destroy').remove();
+                        $preloader.jPlayer('destroy').remove();
+                    } catch (e) {
+                        console.warn("Error cleaning up after playNext error:", e);
                     }
                 }
             };
 
             const preloadTrack = (trackName) => {
                 try {
+                    // Ensure the track name is a valid URL
+                    if (!trackName.startsWith('http') && !trackName.startsWith('/')) {
+                        trackName = '/' + trackName;
+                    }
                     $preloader.jPlayer('setMedia', { mp3: trackName })
                         .jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0)
                         .jPlayer('stop');
@@ -308,6 +325,16 @@ class AudioManager {
                     }
                 } catch (error) {
                     console.error("Error in switchAudio:", error);
+                    // Clean up and restore music volume on error
+                    try {
+                        if (self.isDucking) {
+                            self.restoreMusicVolume();
+                        }
+                        $player.jPlayer('destroy').remove();
+                        $preloader.jPlayer('destroy').remove();
+                    } catch (e) {
+                        console.warn("Error cleaning up after switchAudio error:", e);
+                    }
                 }
             };
 
@@ -317,13 +344,23 @@ class AudioManager {
             }
 
             this.playCallback = {};
+            // Ensure the first track name is a valid URL
+            if (!arr[0].startsWith('http') && !arr[0].startsWith('/')) {
+                arr[0] = '/' + arr[0];
+            }
             $preloader.jPlayer('setMedia', { mp3: arr[0] });
             playNext();
         } catch (error) {
             console.error("Error in startPlaying:", error);
-            // Restore music volume on error
-            if (this.isDucking) {
-                this.restoreMusicVolume();
+            // Clean up and restore music volume on error
+            try {
+                if (this.isDucking) {
+                    this.restoreMusicVolume();
+                }
+                if ($player) $player.jPlayer('destroy').remove();
+                if ($preloader) $preloader.jPlayer('destroy').remove();
+            } catch (e) {
+                console.warn("Error cleaning up after startPlaying error:", e);
             }
         }
     }
@@ -339,7 +376,7 @@ class AudioManager {
                     this.musicVolume = playerData.options.volume;
                 }
             }
-            this.$players.find('.music').jPlayer('volume', 0);
+        this.$players.find('.music').jPlayer('volume', 0);
         } catch (error) {
             console.error("Error in stopPlaying:", error);
         }
