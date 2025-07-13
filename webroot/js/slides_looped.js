@@ -404,6 +404,18 @@ function getSlideBackground(slideType, dayName = null) {
 // Keep track of preloaded images
 window.preloadedImages = {};
 
+// Function to get the next slide type based on current slide and flavor
+function getNextSlideType(currentSlideType) {
+    // Get the current slide index
+    const currentIndex = slideSettings.order.findIndex(slide => slide.function === currentSlideType);
+    if (currentIndex === -1) return null;
+    
+    // Get the next slide index, wrapping around to 0 if at the end
+    const nextIndex = (currentIndex + 1) >= slideSettings.order.length ? 0 : (currentIndex + 1);
+    
+    return slideSettings.order[nextIndex].function;
+}
+
 // Function to preload the next slide's background
 function preloadNextSlide(slideType) {
     // Get the background URL for this slide type
@@ -440,6 +452,38 @@ function preloadNextSlide(slideType) {
             };
             variantImg.src = variantBg;
         });
+    }
+    
+    // Also preload the next slide's background based on the current flavor
+    const nextSlideType = getNextSlideType(slideType);
+    if (nextSlideType && nextSlideType !== slideType) {
+        let nextBgUrl = getSlideBackground(nextSlideType);
+        if (nextBgUrl) {
+            nextBgUrl = nextBgUrl + '?' + Date.now();
+            const nextImg = new Image();
+            nextImg.onload = () => {
+                window.preloadedImages[nextSlideType] = {
+                    image: nextImg,
+                    timestamp: Date.now()
+                };
+            };
+            nextImg.src = nextBgUrl;
+            
+            // If next slide is daypart forecast, preload its variants too
+            if (nextSlideType === 'daypartForecast') {
+                ['today', 'tonight', 'tomorrow'].forEach(variant => {
+                    const variantBg = getSlideBackground(nextSlideType, variant) + '?' + Date.now();
+                    const variantImg = new Image();
+                    variantImg.onload = () => {
+                        window.preloadedImages[`${nextSlideType}_${variant}`] = {
+                            image: variantImg,
+                            timestamp: Date.now()
+                        };
+                    };
+                    variantImg.src = variantBg;
+                });
+            }
+        }
     }
 }
 
@@ -687,6 +731,8 @@ function showSlides() {
                 function getDynamicPeriodLabels() {
                     var now = new Date();
                     var currentHour = now.getHours();
+                    var currentMinutes = now.getMinutes();
+                    var totalMinutes = (currentHour * 60) + currentMinutes;
                     var labels = [];
                     
                     // Calculate day names based on the time period
@@ -695,17 +741,18 @@ function showSlides() {
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     var tomorrowName = tomorrow.toLocaleDateString('en-US', { weekday: 'long' });
                     
-                    if (currentHour >= 3 && currentHour < 15) {
-                        // 3 AM to 3 PM: Today, Tonight, Tomorrow's Day Name
+                    // Convert hour boundaries to minute-based checks (3:05 = 185 minutes, 15:05 = 905 minutes, 22:05 = 1325 minutes)
+                    if (totalMinutes >= 185 && totalMinutes < 905) {
+                        // 3:05 AM to 3:05 PM: Today, Tonight, Tomorrow's Day Name
                         labels = ["Today", "Tonight", tomorrowName];
-                    } else if (currentHour >= 15 && currentHour < 22) {
-                        // 3 PM to 10 PM: Tonight, Tomorrow's Day Name, Tomorrow Night
+                    } else if (totalMinutes >= 905 && totalMinutes < 1325) {
+                        // 3:05 PM to 10:05 PM: Tonight, Tomorrow's Day Name, Tomorrow Night
                         labels = ["Tonight", tomorrowName, tomorrowName + " Night"];
-                    } else if (currentHour >= 22) {
-                        // 10 PM to 11:59 PM: Overnight, Tomorrow's Day Name, Tomorrow Night
+                    } else if (totalMinutes >= 1325) {
+                        // 10:05 PM to 11:59 PM: Overnight, Tomorrow's Day Name, Tomorrow Night
                         labels = ["Overnight", tomorrowName, tomorrowName + " Night"];
                     } else {
-                        // 12 AM to 3 AM: Overnight, Today's Day Name, Today's Day Name + Night
+                        // 12:00 AM to 3:05 AM: Overnight, Today's Day Name, Today's Day Name + Night
                         // After midnight, "today" is the current day name
                         labels = ["Overnight", todayName, todayName + " Night"];
                     }
