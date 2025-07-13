@@ -251,8 +251,8 @@ class AudioManager {
                     if (getNextIndex() === null) {
                         $preloader.off($.jPlayer.event.ended).on($.jPlayer.event.ended, () => {
                             try {
-                                // Restore music volume if this was a voice player
-                                if (audioType === 'voice' && self.isDucking) {
+                                // Restore music volume if this was a voice player or alert beep
+                                if ((audioType === 'voice' || isAlertBeep) && self.isDucking) {
                                     self.restoreMusicVolume();
                                 }
                                 $player.jPlayer('destroy').remove();
@@ -277,42 +277,42 @@ class AudioManager {
 
             const preloadTrack = (trackName) => {
                 try {
-                        $preloader.jPlayer('setMedia', { mp3: trackName })
-                            .jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0)
-                            .jPlayer('stop');
+                    $preloader.jPlayer('setMedia', { mp3: trackName })
+                        .jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0)
+                        .jPlayer('stop');
                 } catch (e) {
-                        console.error("Error preloading track:", e);
+                    console.error("Error preloading track:", e);
                     setTimeout(() => preloadTrack(trackName), 500);
                 }
             };
 
             const getNextIndex = () => {
                 const nextIndex = current + 1;
-                    return nextIndex < len ? nextIndex : (loop ? 0 : null);
+                return nextIndex < len ? nextIndex : (loop ? 0 : null);
             };
 
             const switchAudio = () => {
                 try {
-                var tempAudio = $player;
-                var tempAudio2 = $preloader;
-                $player = tempAudio2;
-                $preloader = tempAudio;
+                    var tempAudio = $player;
+                    var tempAudio2 = $preloader;
+                    $player = tempAudio2;
+                    $preloader = tempAudio;
                     
-                $player.jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0);
+                    $player.jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0);
 
-                        if (!this.isMobile) {
-                            $(document).one('mousedown', () => {
-                        $player.jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0);
-                        this.isMobile = true;
-                            });
-                        }
+                    if (!this.isMobile) {
+                        $(document).one('mousedown', () => {
+                            $player.jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0);
+                            this.isMobile = true;
+                        });
+                    }
                 } catch (error) {
                     console.error("Error in switchAudio:", error);
                 }
             };
 
-            // Duck music volume for voice playback
-            if (audioType === 'voice' && !isAlertBeep && !this.isAlertBeepPlaying) {
+            // Duck music volume for voice playback or alert beeps
+            if (audioType === 'voice' || isAlertBeep) {
                 this.duckMusicVolume();
             }
 
