@@ -146,7 +146,7 @@ function animateRadar(map, timestamps) {
   clearInterval(radarAnimation);
   clearInterval(animationInterval);
   //let interval = (map === locradar) ? 70 : (map === regradar) ? 15 : 120;
-  let interval = 90;
+  let interval = 60;
   const layerPrefix = "radarlayer_";
   let currentIndex = 0;
 
