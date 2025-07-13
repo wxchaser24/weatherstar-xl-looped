@@ -7,6 +7,8 @@ class AudioManager {
         this.isAlertBeepPlaying = false
         this.queuedNarration = null
         this.alertBeepTimeout = null
+        this.musicVolume = 0.8 // Track music volume
+        this.isDucking = false // Track ducking state
 
         $('body').append(this.$players)
 
@@ -37,9 +39,49 @@ class AudioManager {
                 clearTimeout(this.alertBeepTimeout);
                 this.alertBeepTimeout = null;
             }
+            
+            // Restore music volume if it was ducked
+            if (this.isDucking) {
+                this.restoreMusicVolume();
+            }
+            
             console.log("Reset voice players - alert beep state:", this.isAlertBeepPlaying);
         } catch (error) {
             console.error("Error in resetVoicePlayers:", error);
+        }
+    }
+
+    // Add method to restore music volume
+    restoreMusicVolume() {
+        try {
+            const musicPlayers = this.$players.find('.music');
+            if (musicPlayers.length > 0) {
+                musicPlayers.jPlayer('volume', this.musicVolume);
+                console.log("Restored music volume to:", this.musicVolume);
+            }
+            this.isDucking = false;
+        } catch (error) {
+            console.error("Error restoring music volume:", error);
+        }
+    }
+
+    // Add method to duck music volume
+    duckMusicVolume() {
+        try {
+            const musicPlayers = this.$players.find('.music');
+            if (musicPlayers.length > 0) {
+                // Store current volume before ducking
+                const player = musicPlayers.first();
+                const playerData = player.data('jPlayer');
+                if (playerData) {
+                    this.musicVolume = playerData.options.volume;
+                }
+                musicPlayers.jPlayer('volume', 0);
+                this.isDucking = true;
+                console.log("Ducked music volume, stored volume:", this.musicVolume);
+            }
+        } catch (error) {
+            console.error("Error ducking music volume:", error);
         }
     }
 
@@ -53,9 +95,9 @@ class AudioManager {
         try {
             console.log("Attempting to play CC, alert beep state:", this.isAlertBeepPlaying);
             if(vl && this.vocallocal && this.vocallocal.length > 0){
-                this.startPlaying(this.vocallocal, false);
-            } else{
-                this.startPlaying(['narrations/Your_current_conditions.mp3'], false)
+            this.startPlaying(this.vocallocal, false);
+        } else{
+            this.startPlaying(['narrations/Your_current_conditions.mp3'], false)
             }
         } catch (error) {
             console.error("Error in playCC:", error);
@@ -66,7 +108,7 @@ class AudioManager {
     playLF() {
         try {
             console.log("Attempting to play LF, alert beep state:", this.isAlertBeepPlaying);
-            this.startPlaying(['narrations/The_forecast_for_your_area.mp3'], false)
+        this.startPlaying(['narrations/The_forecast_for_your_area.mp3'], false)
         } catch (error) {
             console.error("Error in playLF:", error);
         }
@@ -75,7 +117,7 @@ class AudioManager {
     playEF() {
         try {
             console.log("Attempting to play EF, alert beep state:", this.isAlertBeepPlaying);
-            this.startPlaying(['narrations/Your_extended_forecast.mp3'], false)
+        this.startPlaying(['narrations/Your_extended_forecast.mp3'], false)
         } catch (error) {
             console.error("Error in playEF:", error);
         }
@@ -189,6 +231,10 @@ class AudioManager {
                             console.log("Alert beep error - resetting state");
                             self.resetAlertState();
                         }
+                        // Restore music volume on error
+                        if (self.isDucking) {
+                            self.restoreMusicVolume();
+                        }
                     }
                 });
                 this.$players.append($div);
@@ -205,9 +251,9 @@ class AudioManager {
                     if (getNextIndex() === null) {
                         $preloader.off($.jPlayer.event.ended).on($.jPlayer.event.ended, () => {
                             try {
-                                // Only restore music volume if no alert beep is playing
-                                if (!self.isAlertBeepPlaying) {
-                                    this.$players.find('.music').jPlayer('volume', 0.8);
+                                // Restore music volume if this was a voice player
+                                if (audioType === 'voice' && self.isDucking) {
+                                    self.restoreMusicVolume();
                                 }
                                 $player.jPlayer('destroy').remove();
                                 $preloader.jPlayer('destroy').remove();
@@ -222,48 +268,52 @@ class AudioManager {
                     }
                 } catch (error) {
                     console.error("Error in playNext:", error);
+                    // Restore music volume on error
+                    if (self.isDucking) {
+                        self.restoreMusicVolume();
+                    }
                 }
             };
 
             const preloadTrack = (trackName) => {
                 try {
-                    $preloader.jPlayer('setMedia', { mp3: trackName })
-                        .jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0)
-                        .jPlayer('stop');
+                        $preloader.jPlayer('setMedia', { mp3: trackName })
+                            .jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0)
+                            .jPlayer('stop');
                 } catch (e) {
-                    console.error("Error preloading track:", e);
+                        console.error("Error preloading track:", e);
                     setTimeout(() => preloadTrack(trackName), 500);
                 }
             };
 
             const getNextIndex = () => {
                 const nextIndex = current + 1;
-                return nextIndex < len ? nextIndex : (loop ? 0 : null);
+                    return nextIndex < len ? nextIndex : (loop ? 0 : null);
             };
 
             const switchAudio = () => {
                 try {
-                    var tempAudio = $player;
-                    var tempAudio2 = $preloader;
-                    $player = tempAudio2;
-                    $preloader = tempAudio;
+                var tempAudio = $player;
+                var tempAudio2 = $preloader;
+                $player = tempAudio2;
+                $preloader = tempAudio;
                     
-                    $player.jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0);
+                $player.jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0);
 
-                    if (!this.isMobile) {
-                        $(document).one('mousedown', () => {
-                            $player.jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0);
-                            this.isMobile = true;
-                        });
-                    }
+                        if (!this.isMobile) {
+                            $(document).one('mousedown', () => {
+                        $player.jPlayer('play', audioType == 'music' ? Math.abs(audioSettings.offset) : 0);
+                        this.isMobile = true;
+                            });
+                        }
                 } catch (error) {
                     console.error("Error in switchAudio:", error);
                 }
             };
 
-            // Only mute music if this is a narration and no alert beep is playing
-            if (audioType != 'music' && !isAlertBeep && !this.isAlertBeepPlaying) {
-                this.$players.find('.music').jPlayer('volume', 0);
+            // Duck music volume for voice playback
+            if (audioType === 'voice' && !isAlertBeep && !this.isAlertBeepPlaying) {
+                this.duckMusicVolume();
             }
 
             this.playCallback = {};
@@ -271,11 +321,24 @@ class AudioManager {
             playNext();
         } catch (error) {
             console.error("Error in startPlaying:", error);
+            // Restore music volume on error
+            if (this.isDucking) {
+                this.restoreMusicVolume();
+            }
         }
     }
 
     stopPlaying() {
         try {
+            // Store current volume before stopping
+            const musicPlayers = this.$players.find('.music');
+            if (musicPlayers.length > 0) {
+                const player = musicPlayers.first();
+                const playerData = player.data('jPlayer');
+                if (playerData) {
+                    this.musicVolume = playerData.options.volume;
+                }
+            }
             this.$players.find('.music').jPlayer('volume', 0);
         } catch (error) {
             console.error("Error in stopPlaying:", error);
