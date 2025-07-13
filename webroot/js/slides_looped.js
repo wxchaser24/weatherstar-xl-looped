@@ -545,9 +545,9 @@ function showSlides() {
                     $('.current-conditions .labels').fadeIn(0);
                     $('.current-conditions .information').fadeIn(0);
                 }, animationDelay);
-                setTimeout(() => {
-                    $('.current-conditions').fadeOut(0);
-                    slideCallBack();
+                        setTimeout(() => {
+                        $('.current-conditions').fadeOut(0);
+                        slideCallBack();
                 }, slideSettings.slideDelay)
             } catch (error) {
                 console.error(error);
@@ -559,9 +559,9 @@ function showSlides() {
                     $('.current-conditions .labels').fadeIn(0);
                     $('.current-conditions .noreport').fadeIn(0);
                 }, 900);
-                setTimeout(() => {
-                    $('.current-conditions').fadeOut(0);
-                    slideCallBack();
+                        setTimeout(() => {
+                        $('.current-conditions').fadeOut(0);
+                        slideCallBack();
                 }, slideSettings.slideDelay)
             }
         },
@@ -769,9 +769,9 @@ function showSlides() {
                     $('.local-forecast .slide .period').text(dynamicLabels[2]);
                     $('.local-forecast .slide .description').text(weatherInfo.dayDesc.days[2].desc);
                 }, slideSettings.slideDelay * 2);
-                setTimeout(() => {
-                    $('.local-forecast').fadeOut(0);
-                    slideCallBack();
+                        setTimeout(() => {
+                        $('.local-forecast').fadeOut(0);
+                        slideCallBack();
                 }, slideSettings.slideDelay * 3);
             } catch (error) {
                 console.error(error);
@@ -781,9 +781,9 @@ function showSlides() {
                     $('.local-forecast .noreport').fadeIn(0);
                     $('.local-forecast .city-name').fadeIn(0);
                 }, 900)
-                setTimeout(() => {
-                    $('.local-forecast').fadeOut(0);
-                    slideCallBack();
+                        setTimeout(() => {
+                        $('.local-forecast').fadeOut(0);
+                        slideCallBack();
                 }, slideSettings.slideDelay * 3);
             }
         },
@@ -829,9 +829,9 @@ function showSlides() {
                     $('.week-ahead .city-name').fadeIn(0);
                     $('.week-ahead .information').fadeIn(0);
                 }, 500)
-                setTimeout(() => {
-                    $('.week-ahead').fadeOut(0);
-                    slideCallBack();
+                        setTimeout(() => {
+                        $('.week-ahead').fadeOut(0);
+                        slideCallBack();
                 }, slideSettings.slideDelay);
             } catch (error) {
                 console.error(error);
@@ -842,9 +842,9 @@ function showSlides() {
                     $('.week-ahead .city-name').fadeIn(0);
                     $('.week-ahead .noreport').fadeIn(0);
                 }, 500)
-                setTimeout(() => {
-                    $('.week-ahead').fadeOut(0);
-                    slideCallBack();
+                        setTimeout(() => {
+                        $('.week-ahead').fadeOut(0);
+                        slideCallBack();
                 }, slideSettings.slideDelay);
             }
         },
@@ -863,12 +863,20 @@ function showSlides() {
                 $('#locradar').fadeIn(0);
                 $('#locmap').fadeIn(0);
                 locmap.resize();
-                $('.ldl .crawl').marquee('destroy');
-                $('.radar .banner').fadeIn(0);
-                if (weatherInfo.bulletin.crawlAlert.enabled == false) {
+                
+                // Only destroy and hide regular LDL if no alert crawl is active
+                if (!weatherInfo.bulletin.crawlAlert.enabled) {
+                    $('.ldl .crawl').marquee('destroy');
                     pauseLDL(); // Pause LDL instead of clearing interval
                     $('.ldl').fadeOut(0);
+                } else {
+                    // Ensure warning crawl stays on top
+                    $('.ldl').css('z-index', '10');
+                    $('.ldl .warning-crawl').css('z-index', '10');
                 }
+                
+                $('.radar .banner').fadeIn(0);
+
                 startRadar(locradar);
 
                 setTimeout(() => {
@@ -881,9 +889,14 @@ function showSlides() {
                             $('#locmap').fadeOut(0);
                             $('.radar').fadeOut(0);
                             $('.radar .banner').fadeOut(0);
-                            if (weatherInfo.bulletin.crawlAlert.enabled == false) {
+                            // Only show and resume LDL if no alert crawl is active
+                            if (!weatherInfo.bulletin.crawlAlert.enabled) {
                                 $('.ldl').fadeIn(0);
                                 resumeLDL(); // Resume LDL from where it left off
+                            } else {
+                                // Reset warning crawl z-index to normal
+                                $('.ldl').css('z-index', '8');
+                                $('.ldl .warning-crawl').css('z-index', '');
                             }
                         }, 10);
                     } else {
@@ -892,9 +905,14 @@ function showSlides() {
                         $('.radar').fadeOut(0);
                         $('.radar .banner').fadeOut(0);
                         slideCallBack();
-                        if (weatherInfo.bulletin.crawlAlert.enabled == false) {
+                        // Only show and resume LDL if no alert crawl is active
+                        if (!weatherInfo.bulletin.crawlAlert.enabled) {
                             $('.ldl').fadeIn(0);
                             resumeLDL(); // Resume LDL from where it left off
+                        } else {
+                            // Reset warning crawl z-index to normal
+                            $('.ldl').css('z-index', '8');
+                            $('.ldl .warning-crawl').css('z-index', '');
                         }
                     }
                 }, slideSettings.flavor == 'D' ? slideSettings.slideDelay : (slideSettings.slideDelay * 2));
@@ -949,9 +967,9 @@ function showSlides() {
                     $(`.daypart-forecast .hour.iv .temp`).fadeIn(0);
                 }, 1000);
 
-                setTimeout(() => {
-                    $('.daypart-forecast').fadeOut(0);
-                    slideCallBack();
+                        setTimeout(() => {
+                        $('.daypart-forecast').fadeOut(0);
+                        slideCallBack();
                 }, slideSettings.slideDelay);
             } catch (error) {
                 console.error(error);
@@ -964,9 +982,9 @@ function showSlides() {
                 $(`.daypart-forecast .hour.iii`).fadeOut(0);
                 $(`.daypart-forecast .hour.iv`).fadeOut(0);
 
-                setTimeout(() => {
-                    $('.daypart-forecast').fadeOut(0);
-                    slideCallBack();
+                        setTimeout(() => {
+                        $('.daypart-forecast').fadeOut(0);
+                        slideCallBack();
                 }, slideSettings.slideDelay);
             }
         },
@@ -1097,7 +1115,7 @@ function showSlides() {
         } catch (error) {
             console.error("Failed to reset narration system:", error);
         }
-
+        
         // Check if alert status has changed and handle accordingly
         if (!weatherInfo.bulletin.crawlAlert.enabled && warningCrawlEnabled) {
             // Alerts have expired - hide warning crawl and show normal LDL
@@ -1152,7 +1170,7 @@ function showSlides() {
 
         // Clear accumulated elements that could cause duplication
         $('.bulletin .alerts').empty();
-
+        
         // Reset all animated elements to their initial hidden states for proper transitions
         // Current Conditions
         $('.current-conditions .city-name').fadeOut(0);
