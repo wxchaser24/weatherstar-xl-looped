@@ -1,5 +1,5 @@
 var api_key = 'e1f10a1e78da46f5b10a1e78da96f525';
-var map_key = 'YOUR-API-KEY';
+var map_key = 'pk.eyJ1IjoibWljZW9yb25pIiwiYSI6ImNtY25tNHF6NDA4NnMyam9tc3VyN3hvY2cifQ.s2ufqw3foFARAsGE5_TkAw';
 
 var appearanceSettings = {
     marqueeAd: [
@@ -11,7 +11,7 @@ var appearanceSettings = {
     ldlType: '', //what you want to see on ldl. 'observations' = only observations / 'crawl' = only local ad sales / 'both' = both but only will fit during the two minute flavor
     startupTime: 4000, //How long you want to wait for it to start up.
     graphicsPackage: ["v2","v3"][Math.round(Math.random())],
-    version: "1.22"
+    version: "1.23"
 }
 
 var slideSettings = {
