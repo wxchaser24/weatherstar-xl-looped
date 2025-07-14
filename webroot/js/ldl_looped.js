@@ -69,6 +69,7 @@ function displayLDL(idx){
         if(warningCrawlEnabled == false){
             $('.ldl .warning-crawl').fadeIn(0);
             console.log(weatherInfo.bulletin.crawlAlert.alert.significance);
+            // Use the appropriate background image based on significance
             $('.ldl .warning-crawl').css('background-image', `url(images/crawl/alert_${weatherInfo.bulletin.crawlAlert.alert.significance}.png)`);
             $('.ldl .warning-crawl .title').text(weatherInfo.bulletin.crawlAlert.alert.name);
             $('.ldl .warning-crawl .marquee').text(weatherInfo.bulletin.crawlAlert.alert.description.toUpperCase());
@@ -89,11 +90,17 @@ function displayLDL(idx){
                 // Refresh alert data to check for real-time expiration
                 $.getJSON(`https://api.weather.com/v3/alerts/headlines?geocode=${locationConfig.mainCity.lat},${locationConfig.mainCity.lon}&format=json&language=en-US&apiKey=${api_key}`, function(data){
                     var alertStillActive = false;
+                    var currentAlertKey = weatherInfo.bulletin.crawlAlert.alert.detailKey;
+                    
                     if(data && data.alerts) {
                         for(var i = 0; i < data.alerts.length; i++){
-                            if(data.alerts[i].urgencyCode == 1 && data.alerts[i].detailKey === weatherInfo.bulletin.crawlAlert.alert.detailKey) {
-                                alertStillActive = true;
-                                break;
+                            if(data.alerts[i].detailKey === currentAlertKey) {
+                                // Verify alert hasn't expired
+                                var expirationTime = new Date(data.alerts[i].expireTimeLocal);
+                                if(expirationTime > new Date()) {
+                                    alertStillActive = true;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -118,10 +125,9 @@ function displayLDL(idx){
                     $('.ldl').fadeIn(0);
                     displayLDL(0);
                 });
-            }, 30000); // Check every 30 seconds to avoid too many API calls
+            }, 1000); // Check every second for more responsive expiration
             
             return;
-            //bulletin.crawlAlert.alert.significance
         }
         return; // Stay on warning crawl if already enabled
     } else {

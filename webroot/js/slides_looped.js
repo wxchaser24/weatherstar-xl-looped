@@ -31,20 +31,40 @@ function monitorAlertStatus() {
     setInterval(() => {
         // Check real-time alert data from API
         $.getJSON(`https://api.weather.com/v3/alerts/headlines?geocode=${locationConfig.mainCity.lat},${locationConfig.mainCity.lon}&format=json&language=en-US&apiKey=${api_key}`, function(data){
-            var urgentAlertActive = false;
-            var urgentAlert = null;
+            var alertActive = false;
+            var activeAlert = null;
+            var currentAlertKey = weatherInfo.bulletin.crawlAlert.alert ? weatherInfo.bulletin.crawlAlert.alert.detailKey : null;
             
             if(data && data.alerts) {
+                // First check if current alert is still active
+                if(currentAlertKey) {
                 for(var i = 0; i < data.alerts.length; i++){
-                    if(data.alerts[i].urgencyCode == 1) {
-                        urgentAlertActive = true;
-                        urgentAlert = data.alerts[i];
+                        if(data.alerts[i].detailKey === currentAlertKey) {
+                            // Verify alert hasn't expired
+                            var expirationTime = new Date(data.alerts[i].expireTimeLocal);
+                            if(expirationTime > new Date()) {
+                                alertActive = true;
+                                activeAlert = data.alerts[i];
                         break;
+                            }
+                        }
+                    }
+                }
+                
+                // If current alert not found or expired but others exist, take the first valid one
+                if(!alertActive && data.alerts.length > 0) {
+                    for(var i = 0; i < data.alerts.length; i++){
+                        var expirationTime = new Date(data.alerts[i].expireTimeLocal);
+                        if(expirationTime > new Date()) {
+                            alertActive = true;
+                            activeAlert = data.alerts[i];
+                            break;
+                        }
                     }
                 }
             }
             
-            if (!urgentAlertActive && warningCrawlEnabled) {
+            if (!alertActive && warningCrawlEnabled) {
                 // Alerts have expired - hide warning crawl and show normal LDL
                 weatherInfo.bulletin.crawlAlert.enabled = false;
                 warningCrawlEnabled = false;
@@ -52,12 +72,12 @@ function monitorAlertStatus() {
                 $('.ldl .warning-crawl .marquee').marquee('destroy');
                 $('.ldl').fadeIn(0);
                 displayLDL(0); // Start normal LDL cycle
-            } else if (urgentAlertActive && !warningCrawlEnabled) {
-                // New urgent alert has become active - fetch details and show warning crawl
+            } else if (alertActive && (!warningCrawlEnabled || currentAlertKey !== activeAlert.detailKey)) {
+                // New alert has become active or alert has changed - fetch details and show warning crawl
                 weatherInfo.bulletin.crawlAlert.enabled = true;
                 
                 // Fetch detailed alert information
-                $.getJSON('https://api.weather.com/v3/alerts/detail?alertId=' + urgentAlert.detailKey + '&format=json&language=en-US&apiKey=' + api_key, function(alertData) {
+                $.getJSON('https://api.weather.com/v3/alerts/detail?alertId=' + activeAlert.detailKey + '&format=json&language=en-US&apiKey=' + api_key, function(alertData) {
                     var alert = {
                         name: alertData.alertDetail.eventDescription,
                         code: alertData.alertDetail.productIdentifier,
@@ -65,7 +85,8 @@ function monitorAlertStatus() {
                         significance: alertData.alertDetail.significance,
                         description: alertData.alertDetail.texts[0].description,
                         severe: getCrawlSeverity(alertData.alertDetail.productIdentifier),
-                        detailKey: urgentAlert.detailKey
+                        detailKey: activeAlert.detailKey,
+                        expireTimeLocal: activeAlert.expireTimeLocal
                     }
                     weatherInfo.bulletin.crawlAlert.alert = alert;
                     
@@ -87,7 +108,7 @@ function monitorAlertStatus() {
                 displayLDL(0);
             }
         });
-    }, 30000); // Check every 30 seconds to match expiration checking interval
+    }, 1000); // Check every second for more responsive expiration
 }
 
 // Function to monitor time changes and update forecast data when needed
@@ -628,7 +649,7 @@ function showSlides() {
                             // Start next slide early to prevent black flash between 8 Cities and Bulletin
                             if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'bulletin') {
                                 slideCallBack();
-                                $('.eight-cities').fadeOut(0);
+                                    $('.eight-cities').fadeOut(0);
                             } else {
                                 $('.eight-cities').fadeOut(0);
                                 slideCallBack();
@@ -640,7 +661,7 @@ function showSlides() {
                         // Start next slide early to prevent black flash between 8 Cities and Bulletin
                         if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'bulletin') {
                             slideCallBack();
-                            $('.eight-cities').fadeOut(0);
+                                $('.eight-cities').fadeOut(0);
                         } else {
                             $('.eight-cities').fadeOut(0);
                             slideCallBack();
@@ -683,7 +704,7 @@ function showSlides() {
                                 // Start next slide early to prevent black flash between 8 Cities and Bulletin
                                 if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'bulletin') {
                                     slideCallBack();
-                                    $('.eight-cities').fadeOut(0);
+                                        $('.eight-cities').fadeOut(0);
                                 } else {
                                     $('.eight-cities').fadeOut(0);
                                     slideCallBack();
@@ -695,7 +716,7 @@ function showSlides() {
                             // Start next slide early to prevent black flash between 8 Cities and Bulletin
                             if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'bulletin') {
                                 slideCallBack();
-                                $('.eight-cities').fadeOut(0);
+                                    $('.eight-cities').fadeOut(0);
                             } else {
                                 $('.eight-cities').fadeOut(0);
                                 slideCallBack();
@@ -876,9 +897,11 @@ function showSlides() {
                     pauseLDL(); // Pause LDL instead of clearing interval
                     $('.ldl').fadeOut(0);
                 } else {
-                    // Ensure warning crawl stays on top
+                    // Keep alert crawl visible and on top during radar
                     $('.ldl').css('z-index', '10');
                     $('.ldl .warning-crawl').css('z-index', '10');
+                    $('.ldl').fadeIn(0);
+                    $('.ldl .warning-crawl').fadeIn(0);
                 }
                 
                 $('.radar .banner').fadeIn(0);
@@ -890,18 +913,20 @@ function showSlides() {
                     // Start next slide early to prevent black flash between Radar and next slide
                     if (slideSettings.order[nidx] && (slideSettings.order[nidx].function === 'almanac' || slideSettings.order[nidx].function === 'currentConditions' || slideSettings.order[nidx].function === 'dayDesc')) {
                         slideCallBack();
-                        $('#locradar').fadeOut(0);
-                        $('#locmap').fadeOut(0);
-                        $('.radar').fadeOut(0);
-                        $('.radar .banner').fadeOut(0);
+                            $('#locradar').fadeOut(0);
+                            $('#locmap').fadeOut(0);
+                            $('.radar').fadeOut(0);
+                            $('.radar .banner').fadeOut(0);
                         // Only show and resume LDL if no alert crawl is active
                         if (!weatherInfo.bulletin.crawlAlert.enabled) {
-                            $('.ldl').fadeIn(0);
-                            resumeLDL(); // Resume LDL from where it left off
+                                $('.ldl').fadeIn(0);
+                                resumeLDL(); // Resume LDL from where it left off
                         } else {
-                            // Reset warning crawl z-index to normal
+                            // Keep alert crawl visible but reset z-index
                             $('.ldl').css('z-index', '8');
                             $('.ldl .warning-crawl').css('z-index', '');
+                            $('.ldl').fadeIn(0);
+                            $('.ldl .warning-crawl').fadeIn(0);
                         }
                     } else {
                         $('#locradar').fadeOut(0);
@@ -914,9 +939,11 @@ function showSlides() {
                             $('.ldl').fadeIn(0);
                             resumeLDL(); // Resume LDL from where it left off
                         } else {
-                            // Reset warning crawl z-index to normal
+                            // Keep alert crawl visible but reset z-index
                             $('.ldl').css('z-index', '8');
                             $('.ldl .warning-crawl').css('z-index', '');
+                            $('.ldl').fadeIn(0);
+                            $('.ldl .warning-crawl').fadeIn(0);
                         }
                     }
                 }, slideSettings.flavor == 'D' ? slideSettings.slideDelay : (slideSettings.slideDelay * 2));
@@ -1060,7 +1087,7 @@ function showSlides() {
                         // Start next slide early to prevent black flash when alerts expire
                         if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'dayDesc') {
                             slideCallBack();
-                            $('.bulletin').fadeOut(0);
+                                $('.bulletin').fadeOut(0);
                         } else {
                             $('.bulletin').fadeOut(0);
                             slideCallBack();
@@ -1075,7 +1102,7 @@ function showSlides() {
                         // Start next slide early to prevent black flash between Bulletin and next slide
                         if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'dayDesc') {
                             slideCallBack();
-                            $('.bulletin').fadeOut(0);
+                                $('.bulletin').fadeOut(0);
                         } else {
                             $('.bulletin').fadeOut(0);
                             slideCallBack();

@@ -15,7 +15,27 @@ function shuffle(array) {
 }
 
 function getCrawlSeverity(id) {
-	var crawl = { "SVS": true, "SVR": true, "TOR": true, "FFW": true, "FFS": true, "HUW": true, "EWW": true }[id]
+	var crawl = { 
+		"SVS": true, 
+		"SVR": true, 
+		"TOR": true, 
+		"FFW": true, 
+		"FFS": true, 
+		"HUW": true, 
+		"EWW": true,
+		"WSW": true,  // Winter Storm Watch
+		"WSA": true,  // Winter Storm Advisory
+		"WCA": true,  // Wind Chill Advisory
+		"WCW": true,  // Wind Chill Watch
+		"WIY": true,  // Wind Advisory
+		"FZW": true,  // Freeze Watch
+		"FZA": true,  // Freeze Advisory
+		"HWW": true,  // High Wind Watch
+		"DSW": true,  // Dust Storm Watch
+		"BZW": true,  // Blizzard Watch
+		"WTA": true,  // Winter Weather Advisory
+		"FGA": true   // Dense Fog Advisory
+	}[id]
 	if (crawl) return crawl;
 	else { return false; }
 }
