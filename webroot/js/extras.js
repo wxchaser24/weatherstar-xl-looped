@@ -32,6 +32,7 @@ function getCrawlSeverity(id) {
 var codeToCurrent = {
 	400: { iconFile: 'Ts', textModifier: 'Thunderstorm' },
 	401: { iconFile: 'Ts', textModifier: 'Light Rain with Thunder' },
+	402: { iconFile: 'Ts', textModifier: 'Heavy T-Storm' },	
 	429: { iconFile: 'Ts', textModifier: 'Thunderstorm' },
 	470: { iconFile: 'Ts', textModifier: 'Thunderstorm / Windy / Fog' },
 	471: { iconFile: 'Ts', textModifier: 'Light Rain with Thunder' },
