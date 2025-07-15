@@ -37,28 +37,51 @@ function monitorAlertStatus() {
             
             if(data && data.alerts) {
                 // First check if current alert is still active
+                var currentAlertStillActive = false;
                 if(currentAlertKey) {
-                for(var i = 0; i < data.alerts.length; i++){
+                    for(var i = 0; i < data.alerts.length; i++){
                         if(data.alerts[i].detailKey === currentAlertKey) {
                             // Verify alert hasn't expired
                             var expirationTime = new Date(data.alerts[i].expireTimeLocal);
                             if(expirationTime > new Date()) {
-                                alertActive = true;
-                                activeAlert = data.alerts[i];
-                        break;
+                                currentAlertStillActive = true;
+                                break;
                             }
                         }
                     }
                 }
                 
-                // If current alert not found or expired but others exist, take the first valid one
-                if(!alertActive && data.alerts.length > 0) {
+                // If we have alerts, find the highest priority unexpired one
+                if(data.alerts.length > 0) {
+                    var highestPriorityAlert = null;
+                    var highestPriority = -1;
+                    
                     for(var i = 0; i < data.alerts.length; i++){
                         var expirationTime = new Date(data.alerts[i].expireTimeLocal);
                         if(expirationTime > new Date()) {
-                            alertActive = true;
-                            activeAlert = data.alerts[i];
-                            break;
+                            // Determine priority (W=3, Y=2, A=1)
+                            var priority = data.alerts[i].significance === "W" ? 3 : 
+                                         data.alerts[i].significance === "Y" ? 2 : 
+                                         data.alerts[i].significance === "A" ? 1 : 0;
+                            
+                            // Update highest priority alert if this one is higher
+                            if(priority > highestPriority) {
+                                highestPriority = priority;
+                                highestPriorityAlert = data.alerts[i];
+                            }
+                        }
+                    }
+                    
+                    // If we found a valid alert
+                    if(highestPriorityAlert) {
+                        alertActive = true;
+                        // Only switch to new alert if it's higher priority or current alert is no longer active
+                        if(!currentAlertStillActive || 
+                           (currentAlertKey !== highestPriorityAlert.detailKey && 
+                            highestPriority > (weatherInfo.bulletin.crawlAlert.alert.significance === "W" ? 3 : 
+                                             weatherInfo.bulletin.crawlAlert.alert.significance === "Y" ? 2 : 
+                                             weatherInfo.bulletin.crawlAlert.alert.significance === "A" ? 1 : 0))) {
+                            activeAlert = highestPriorityAlert;
                         }
                     }
                 }
@@ -72,8 +95,8 @@ function monitorAlertStatus() {
                 $('.ldl .warning-crawl .marquee').marquee('destroy');
                 $('.ldl').fadeIn(0);
                 displayLDL(0); // Start normal LDL cycle
-            } else if (alertActive && (!warningCrawlEnabled || currentAlertKey !== activeAlert.detailKey)) {
-                // New alert has become active or alert has changed - fetch details and show warning crawl
+            } else if (alertActive && activeAlert && (!warningCrawlEnabled || currentAlertKey !== activeAlert.detailKey)) {
+                // New alert has become active or higher priority alert available - fetch details and show warning crawl
                 weatherInfo.bulletin.crawlAlert.enabled = true;
                 
                 // Fetch detailed alert information
@@ -649,7 +672,7 @@ function showSlides() {
                             // Start next slide early to prevent black flash between 8 Cities and Bulletin
                             if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'bulletin') {
                                 slideCallBack();
-                                $('.eight-cities').fadeOut(0);
+                                    $('.eight-cities').fadeOut(0);
                             } else {
                                 $('.eight-cities').fadeOut(0);
                                 slideCallBack();
@@ -661,7 +684,7 @@ function showSlides() {
                         // Start next slide early to prevent black flash between 8 Cities and Bulletin
                         if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'bulletin') {
                             slideCallBack();
-                            $('.eight-cities').fadeOut(0);
+                                $('.eight-cities').fadeOut(0);
                         } else {
                             $('.eight-cities').fadeOut(0);
                             slideCallBack();
@@ -704,7 +727,7 @@ function showSlides() {
                                 // Start next slide early to prevent black flash between 8 Cities and Bulletin
                                 if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'bulletin') {
                                     slideCallBack();
-                                    $('.eight-cities').fadeOut(0);
+                                        $('.eight-cities').fadeOut(0);
                                 } else {
                                     $('.eight-cities').fadeOut(0);
                                     slideCallBack();
@@ -716,7 +739,7 @@ function showSlides() {
                             // Start next slide early to prevent black flash between 8 Cities and Bulletin
                             if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'bulletin') {
                                 slideCallBack();
-                                $('.eight-cities').fadeOut(0);
+                                    $('.eight-cities').fadeOut(0);
                             } else {
                                 $('.eight-cities').fadeOut(0);
                                 slideCallBack();
@@ -913,14 +936,14 @@ function showSlides() {
                     // Start next slide early to prevent black flash between Radar and next slide
                     if (slideSettings.order[nidx] && (slideSettings.order[nidx].function === 'almanac' || slideSettings.order[nidx].function === 'currentConditions' || slideSettings.order[nidx].function === 'dayDesc')) {
                         slideCallBack();
-                        $('#locradar').fadeOut(0);
-                        $('#locmap').fadeOut(0);
-                        $('.radar').fadeOut(0);
-                        $('.radar .banner').fadeOut(0);
+                            $('#locradar').fadeOut(0);
+                            $('#locmap').fadeOut(0);
+                            $('.radar').fadeOut(0);
+                            $('.radar .banner').fadeOut(0);
                         // Only show and resume LDL if no alert crawl is active
                         if (!weatherInfo.bulletin.crawlAlert.enabled) {
-                            $('.ldl').fadeIn(0);
-                            resumeLDL(); // Resume LDL from where it left off
+                                $('.ldl').fadeIn(0);
+                                resumeLDL(); // Resume LDL from where it left off
                         } else {
                             // Keep alert crawl visible but reset z-index
                             $('.ldl').css('z-index', '8');
@@ -1087,7 +1110,7 @@ function showSlides() {
                         // Start next slide early to prevent black flash when alerts expire
                         if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'dayDesc') {
                             slideCallBack();
-                            $('.bulletin').fadeOut(0);
+                                $('.bulletin').fadeOut(0);
                         } else {
                             $('.bulletin').fadeOut(0);
                             slideCallBack();
@@ -1102,7 +1125,7 @@ function showSlides() {
                         // Start next slide early to prevent black flash between Bulletin and next slide
                         if (slideSettings.order[nidx] && slideSettings.order[nidx].function === 'dayDesc') {
                             slideCallBack();
-                            $('.bulletin').fadeOut(0);
+                                $('.bulletin').fadeOut(0);
                         } else {
                             $('.bulletin').fadeOut(0);
                             slideCallBack();
