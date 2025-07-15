@@ -1,5 +1,6 @@
 
-This a **WeatherSTAR XL** Simulation, Forked From Mist Weather Media. This is a Custom Looped Version. 
+This is the **WeatherSTAR XL** Simulator, Forked From Mist Weather Media. 
+This Fork Allows you the run the simulator in Loop Mode.
 
 # Initial Setup
 
