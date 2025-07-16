@@ -176,6 +176,12 @@ function displayLDL(idx){
     if(weatherInfo.currentConditions.noReport == true){
         throw new Error("LDL will not display due to no report on current conditions");
     }
+    if(appearanceSettings.graphicsPackage == "v1" && ldlRound == 0){
+        $('.ldl .upper-text').fadeOut(0);
+        $('.ldl .lower-text').fadeOut(0);
+        adCrawl();
+        return;
+    }
     var displays = {
         currentObs(){
             $('.ldl .upper-text').fadeIn(0);
@@ -279,6 +285,7 @@ function displayLDL(idx){
             $('.ldl .lower-text.left .cond').css('padding-left', '');
             if(appearanceSettings.ldlType == 'observations') return;
             if(appearanceSettings.ldlType == 'both' && slideSettings.flavor != 'M') return;
+            if(appearanceSettings.graphicsPackage == "v1") return;
             clearInterval(ldlInterval);
             $('.ldl .upper-text').fadeOut(0);
             $('.ldl .lower-text').fadeOut(0);

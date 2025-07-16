@@ -168,6 +168,7 @@ class AudioManager {
 
     buildPlaylist() {
         var musicPath = 'music/';
+        this.playlist = [];
         for(var i = 0; i < audioSettings.order.length; i++){
             this.playlist.push(`${musicPath}${audioSettings.order[i]}.mp3`);
         }

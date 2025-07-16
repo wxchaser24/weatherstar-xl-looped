@@ -86,7 +86,7 @@ body, html {
     filter: blur(4px);
     background-size: 100% 100% !important;
 }
-#settings-menu-content, #song-settings, #version-settings {
+#settings-menu-content, #song-settings, #version-settings, #location-settings {
     position: absolute;
     width: 1000px;
     height: 500px;
@@ -99,6 +99,10 @@ body, html {
     left: 50%;
     top: 50%;
 }
+#location-settings {
+    height: 1000px;
+    width: 1200px;
+}
 #settings-menu .xllogo {
     position: absolute;
     height: 90px;
@@ -106,19 +110,20 @@ body, html {
     top: 165px;
     filter: drop-shadow(2px 2px 5px #000);
 }
-#settings-menu-content button, #song-settings button, #version-settings button {
+#settings-menu-content button, #song-settings button, #version-settings button, #location-settings button {
     position: absolute;
     font-family: "AG Bold Ex";
     color: #debd69;
     background-color: #232731;
     pointer-events: auto !important;
 }
-#settings-menu-content button:hover, #song-settings button:hover, #version-settings button:hover {
+#settings-menu-content button:hover, #song-settings button:hover, #version-settings button:hover, #location-settings button:hover {
     background-color: #323741;
     color: #d4d4d4;
     cursor: pointer;
 }
-.aspectratio, .locname, .locdisplayname, .flavortype, .ldltype, .modetype, .songchoice, .songback, .offsetlabel, .uploadsonglabel {
+.aspectratio, .locname, .locdisplayname, .flavortype, .ldltype, .modetype, .songchoice, .songback, .offsetlabel, .uploadsonglabel,
+.maincity, .maincitydisplayname, .extrcity, .extrcitydisplayname, .extracitiesheader, .maincityextraname {
     font-family: "AG Bold Ex";
     position: absolute;
     font-size: 30px;
@@ -155,24 +160,46 @@ body, html {
     z-index: 10000;
     font-size: 24px;
 }
-.locsearch {
+.input {
+    font-family: "Akzidenz Bold";
+    position: absolute;
+    margin-left: 110px;
     margin-top: 80px;
-    margin-left: 460px;
+    width: 330px;
+    height: 40px;
+    z-index: 10000;
+    font-size: 24px;
+}
+
+#loclookup2, .extralookups,
+#locextraname {
+    margin-left: 200px;
+}
+.locsearch, .locsearch2,
+.extrasearch, .locextranamesubmit {
+    margin-top: 80px;
+    margin-left: 555px;
     width: 100px;
     height: 40px;
     z-index: 10000;
 }
-.locwarning, .locsuccess {
+.locsearch {
+    margin-left: 460px;
+}
+.locwarning, .locsuccess,
+.locwarning2, .locsuccess2,
+.locwarning3, .locsuccess3,
+.extralocationfail, .extralocationsuccess {
     position: absolute;
     text-shadow: 2px 2px #000;
-    margin-top: 85px;
-    margin-left: 580px;
+    margin-top: 125px;
+    margin-left: 630px;
     font-size: 22px;
 }
-.locwarning { 
+.locwarning, .locwarning2, .locwarning3, .extralocationfail { 
     color:red;
 }
-.locsuccess {
+.locsuccess, .locsuccess2, .locsuccess3, .extralocationsuccess {
     color: green;
 }
 .asp {
@@ -228,7 +255,7 @@ body, html {
     position: absolute;
     text-shadow: 2px 2px #000;
     margin-top: 320px;
-    margin-left: 600px;
+    margin-left: 540px;
     color: gold;
     width: 270px;
 }
@@ -279,7 +306,9 @@ body, html {
     margin-left: 10.8%;
     margin-top: 225px;
 }
-.songbutton, #songuploadinput, .versionsbutton {
+.songbutton, #songuploadinput, .versionsbutton,
+.locsave, .locsavecookies, .locsavejson, .locloadcookies,
+.locloadconfig {
     position: absolute;
     font-size: 30px;
     width: 300px;
@@ -335,6 +364,13 @@ body, html {
     margin-left: 410px;
     width: 600px;
 }
+.advlocsettings {
+    position: absolute;
+    font-size: 24px;
+    margin-top: 80px;
+    margin-left: 580px;
+    height: 40px;
+}
 .start-button {
     position: absolute;
     width: 240px;
@@ -377,7 +413,7 @@ body, html {
     margin-top: -80px;
     filter: drop-shadow(2px 2px 5px #000);
 }
-.mistpromo a {
+.mistpromo a, .jwx a {
     display: block;
     height: inherit;
     opacity: 0;
@@ -389,8 +425,9 @@ body, html {
     text-shadow: 2px 2px #000;
     top: 20px;
     left: 20px;
+    z-index: 99999;
 }
-.songback, .versionback {
+.songback, .versionback, .locationback {
     position: absolute;
     width: 240px;
     height: 70px;
@@ -398,6 +435,10 @@ body, html {
     font-size: 48px;
     margin-left: 370px;
     margin-top: 390px;
+}
+.locationback {
+    margin-top: 890px;
+    margin-left: 470px;
 }
 .versionwarning {
     position: absolute;
@@ -420,4 +461,116 @@ body, html {
     background-color: #555 !important;
     color: #888 !important;
     cursor: not-allowed !important;
+} 
+.maincitydisplayname {
+    position: absolute;
+    margin-top: 30px;
+    margin-left: 430px;
+}
+.locwarning2, .locsuccess2 {
+    margin-top: 40px;
+    margin-left: 500px;
+}
+.extralocationfail, .extralocationsuccess {
+    margin-top: 660px;
+    font-size: 25px;
+    width: 1200px;
+    text-align: center;
+    margin-left: 0;
+}
+.extracities {
+    margin-top: 100px;
+}
+.extracitiesheader, .maincity {
+    margin-top: 130px;
+    font-size: 48px;
+    color: #debd69;
+}
+.maincity {
+    position: absolute;
+    margin-top: 26px;
+}
+.extracity {
+    position: absolute;
+    width: 500px;
+}
+.extracity.i {
+    margin-top: 135px;
+}
+.extracity.ii {
+    margin-top: 180px;
+}
+.extracity.iii {
+    margin-top: 225px;
+}
+.extracity.iv {
+    margin-top: 270px;
+}
+.extracity.v {
+    margin-top: 315px;
+}
+.extracity.vi {
+    margin-top: 360px;
+}
+.extracity.vii {
+    margin-top: 405px;
+}
+.extracity.viii {
+    margin-top: 450px;
+}
+.extrcity, .extrcitydisplayname {
+    margin-top: 30px;
+    margin-left: 206px;
+    width: 500px;
+}
+.extrcitydisplayname, .maincitydisplayname {
+    margin-left: 675px;
+    margin-top: 80px;
+}
+.locsave, .locsavecookies, .locsavejson, .locloadcookies, .locloadconfig {
+    width: 410px;
+}
+.locsave {
+    margin-top: 715px;
+}
+.locsavecookies {
+    margin-top: 765px;
+}
+.locsavejson {
+    margin-top: 815px;
+}
+.locloadcookies {
+    margin-top: 765px;
+    margin-left: 740px;
+}
+.locloadconfig {
+    margin-top: 815px;
+    margin-left: 740px;
+}
+#loclookup2, .locsearch2, .maincitydisplayname {
+    margin-top: 110px;
+}
+.locextranamesubmit {
+    margin-top: 165px;
+}
+#locloadconfiginput {
+    position: absolute;
+    width: 410px;
+    margin-left: -379px;
+}
+.displaynametip {
+    position: absolute;
+    font-family: "Akzidenz Md";
+    text-shadow: 2px 2px #000;
+    font-size: 32px;
+    width: 1150px;
+    text-align: center;
+    bottom: 222px;
+}
+.maincityextraname {
+    margin-left: 675px;
+    margin-top: 165px;
+}
+#locextraname {
+    margin-top: 165px;
 }

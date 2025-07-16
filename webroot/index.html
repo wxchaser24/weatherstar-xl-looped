@@ -90,7 +90,8 @@
     <script type="text/javascript" src="js/date_fns.min.js"></script>
     <script type="text/javascript" src="js/date_fns.min.js.map"></script>
     <script src="js/date_fns.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery.marquee@1.5.0/jquery.marquee.min.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.marquee@1.5.0/jquery.marquee.min.js"
+        type="text/javascript"></script>
 
     <script type="text/javascript" src="js/config.js"></script>
     <script type="text/javascript" src="js/location.js"></script>
@@ -112,9 +113,10 @@
         <h1 class="locname">Location Name:</h1>
         <h1 class="locdisplayname"></h1>
         <input type="text" class="input" id="loclookup" autocomplete="off" placeholder="Search for location here...">
-        <button class="locsearch" onclick="locSearch()">Search</button>
+        <button class="locsearch" onclick="locSearch('main')">Search</button>
         <div class="locwarning" style="display: none;">ERROR: Put in a value.</div>
         <div class="locsuccess" style="display: none;">Success! Location updated.</div>
+        <button class="advlocsettings" onclick="locationSetting('in')">Location Settings</button>
         <!--Aspect Ratio-->
         <h1 class="aspectratio">Aspect Ratio:</h1>
         <button class="asp four-three-button" onclick="setAspectRatio(4/3)">4:3</button>
@@ -140,7 +142,7 @@
         <button class="start-button" onclick="startButton()">Start</button>
         <h3 id="promo">Created by</h3>
         <h3 id="promoii">, brought to you by </h3>
-        <div class="jwx" title="JensonWX"></div>
+        <div class="jwx"><a href="https://www.youtube.com/@jensonwx" target="_blank" title="JensonWX"></a></div>
         <div class="mistpromo"><a href="https://mistwx.com/" target="_blank" title="Mist Weather Media"></a></div>
     </div>
     <div id="song-settings" class="container" style="display: none;">
@@ -179,6 +181,83 @@
         <button class="v3button" onclick="versionSettings(null, 'v3')">v3</button>
         <div class="versionwarning" style="display: none;">V1 is in the works!</div>
         <button class="versionback" onclick="versionSettings('out', 'vv')">Back</button>
+    </div>
+    <div id="location-settings" class="container" style="display: none;">
+        <button class="locationback" onclick="locationSetting('out')">Back</button>
+        <div class="maincity">Main City:</div>
+        <div class="maincitydisplayname"></div>
+        <div class="maincityextraname"></div>
+        <input type="text" class="input" id="loclookup2" autocomplete="off" placeholder="Search for location here...">
+        <input type="text" class="input" id="locextraname" autocomplete="off" placeholder="Type extra name here...">
+        <button class="locsearch2" onclick="locSearch('advloc')">Search</button>
+        <button class="locextranamesubmit" onclick="saveExtraName()">Save</button>
+        <div class="locwarning2" style="display: none;">ERROR: Put in a value.</div>
+        <div class="locsuccess2" style="display: none;">Success! Location updated.</div>
+        <div class="extracities">
+            <div class="extracitiesheader">Local Observations:</div>
+            <div class="extracity i">
+                <div class="extrcitydisplayname"></div>
+                <input type="text" class="input extralookups" id="extralookup1" autocomplete="off"
+                    placeholder="Search for location here...">
+                <button class="extrasearch i" onclick="createNewExtraCity(0)">Search</button>
+            </div>
+            <div class="extracity ii">
+                <div class="extrcitydisplayname"></div>
+                <input type="text" class="input extralookups" id="extralookup2" autocomplete="off"
+                    placeholder="Search for location here...">
+                <button class="extrasearch ii" onclick="createNewExtraCity(1)">Search</button>
+            </div>
+            <div class="extracity iii">
+                <div class="extrcitydisplayname"></div>
+                <input type="text" class="input extralookups" id="extralookup3" autocomplete="off"
+                    placeholder="Search for location here...">
+                <button class="extrasearch iii" onclick="createNewExtraCity(2)">Search</button>
+            </div>
+            <div class="extracity iv">
+                <div class="extrcitydisplayname"></div>
+                <input type="text" class="input extralookups" id="extralookup4" autocomplete="off"
+                    placeholder="Search for location here...">
+                <button class="extrasearch iv" onclick="createNewExtraCity(3)">Search</button>
+            </div>
+            <div class="extracity v">
+                <div class="extrcitydisplayname"></div>
+                <input type="text" class="input extralookups" id="extralookup5" autocomplete="off"
+                    placeholder="Search for location here...">
+                <button class="extrasearch v" onclick="createNewExtraCity(4)">Search</button>
+            </div>
+            <div class="extracity vi">
+                <div class="extrcitydisplayname"></div>
+                <input type="text" class="input extralookups" id="extralookup6" autocomplete="off"
+                    placeholder="Search for location here...">
+                <button class="extrasearch vi" onclick="createNewExtraCity(5)">Search</button>
+            </div>
+            <div class="extracity vii">
+                <div class="extrcitydisplayname"></div>
+                <input type="text" class="input extralookups" id="extralookup7" autocomplete="off"
+                    placeholder="Search for location here...">
+                <button class="extrasearch vii" onclick="createNewExtraCity(6)">Search</button>
+            </div>
+            <div class="extracity viii">
+                <div class="extrcitydisplayname"></div>
+                <input type="text" class="input extralookups" id="extralookup8" autocomplete="off"
+                    placeholder="Search for location here...">
+                <button class="extrasearch viii" onclick="createNewExtraCity(7)">Search</button>
+            </div>
+            <div class="extralocationfail" style="display: none;">ERROR: Location 1's search failed.</div>
+            <div class="extralocationsuccess" style="display: none;">Success! Locations changed.</div>
+        </div>
+        <button class="locsave" onclick="saveLocationSettings(true)">Save</button>
+        <button class="locsavecookies" onclick="saveLocationCookies()">Save to Cookies</button>
+        <button class="locsavejson" onclick="downloadConfig()">Download Config</button>
+        <button class="locloadcookies" onclick="loadLocationCookies()">Load from Cookies</button>
+        <button class="locloadconfig">
+            Load from Config
+            <input id="locloadconfiginput" type="file" accept="application/json" style="opacity: 0; cursor: pointer;">
+        </button>
+        <div class="displaynametip">
+            To change the display name, put it in the search with curly brackets.
+            Example: "Marietta {Dobbins ARB}"
+        </div>
     </div>
     <div id="main" class="container">
         <div class="date-time" id="date" style="display:none;"></div>

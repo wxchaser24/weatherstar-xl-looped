@@ -15,15 +15,7 @@ function shuffle(array) {
 }
 
 function getCrawlSeverity(id) {
-	var crawl = { 
-		"SVS": true, 
-		"SVR": true, 
-		"TOR": true, 
-		"FFW": true, 
-		"FFS": true, 
-		"HUW": true, 
-		"EWW": true,
-	}[id]
+	var crawl = { "SVS": true, "SVR": true, "TOR": true, "FFW": true, "FFS": true, "HUW": true, "EWW": true }[id]
 	if (crawl) return crawl;
 	else { return false; }
 }
@@ -32,7 +24,7 @@ function getCrawlSeverity(id) {
 var codeToCurrent = {
 	400: { iconFile: 'Ts', textModifier: 'Thunderstorm' },
 	401: { iconFile: 'Ts', textModifier: 'Light Rain with Thunder' },
-	402: { iconFile: 'Ts', textModifier: 'Heavy T-Storm' },	
+	402: { iconFile: 'Tss', textModifier: "Heavy Thunderstorm" },
 	429: { iconFile: 'Ts', textModifier: 'Thunderstorm' },
 	470: { iconFile: 'Ts', textModifier: 'Thunderstorm / Windy / Fog' },
 	471: { iconFile: 'Ts', textModifier: 'Light Rain with Thunder' },
@@ -776,4 +768,15 @@ function formatStationName(stationname) {
 	}
 	if (newstation.includes(" - ")) { newstation = newstation.split(" - ")[1]; }
 	return newstation;
+}
+function getCookie(name){
+    let cookies = decodeURIComponent(document.cookie);
+    let cookiesArr = cookies.split("; ");
+    for(var i = 0; i < cookiesArr.length; i++){
+      if(cookiesArr[i].split("=")[0] == name){
+        //console.log(cookiesArr[i]);
+        return cookiesArr[i].split("=")[1];
+      }
+    }
+    return "";
 }
