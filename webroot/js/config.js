@@ -1,5 +1,6 @@
 var api_key = 'e1f10a1e78da46f5b10a1e78da96f525';
 var map_key = 'pk.eyJ1IjoibWljZW9yb25pIiwiYSI6ImNtY25tNHF6NDA4NnMyam9tc3VyN3hvY2cifQ.s2ufqw3foFARAsGE5_TkAw';
+var loopMode = false;
 
 var appearanceSettings = {
     marqueeAd: [
