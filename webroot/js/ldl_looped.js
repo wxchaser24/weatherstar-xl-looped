@@ -106,14 +106,28 @@ function displayLDL(idx){
                     }
                     
                     if (!alertStillActive) {
-                        // Alert has expired - immediately stop the warning crawl
+                        // Alert has expired - immediately stop the warning crawl and resume LDL
                         weatherInfo.bulletin.crawlAlert.enabled = false;
                         clearInterval(warningCrawlCheckInterval);
                         warningCrawlEnabled = false;
                         $('.ldl .warning-crawl').fadeOut(0);
                         $('.ldl .warning-crawl .marquee').marquee('destroy');
                         $('.ldl').fadeIn(0);
-                        displayLDL(0); // Start normal LDL cycle
+                        // Reset LDL elements to initial state
+                        $('.ldl .upper-text').fadeOut(0);
+                        $('.ldl .lower-text').fadeOut(0);
+                        $('.ldl .lower-text.left .label').fadeOut(0);
+                        $('.ldl .lower-text.left .cond').fadeOut(0);
+                        $('.ldl .lower-text.left .cc').fadeOut(0);
+                        $('.ldl .lower-text.right').fadeOut(0);
+                        $('.ldl .lower-text.right .label').fadeOut(0);
+                        $('.ldl .lower-text.right .cond').fadeOut(0);
+                        $('.ldl .crawl').marquee('destroy');
+                        $('.ldl .crawl').text("");
+                        // Reset any custom padding
+                        $('.ldl .lower-text.left .cond').css('padding-left', '');
+                        // Start normal LDL cycle
+                        displayLDL(0);
                     }
                 }).fail(function(){
                     // If API call fails, assume alert has expired to be safe
@@ -123,6 +137,20 @@ function displayLDL(idx){
                     $('.ldl .warning-crawl').fadeOut(0);
                     $('.ldl .warning-crawl .marquee').marquee('destroy');
                     $('.ldl').fadeIn(0);
+                    // Reset LDL elements to initial state
+                    $('.ldl .upper-text').fadeOut(0);
+                    $('.ldl .lower-text').fadeOut(0);
+                    $('.ldl .lower-text.left .label').fadeOut(0);
+                    $('.ldl .lower-text.left .cond').fadeOut(0);
+                    $('.ldl .lower-text.left .cc').fadeOut(0);
+                    $('.ldl .lower-text.right').fadeOut(0);
+                    $('.ldl .lower-text.right .label').fadeOut(0);
+                    $('.ldl .lower-text.right .cond').fadeOut(0);
+                    $('.ldl .crawl').marquee('destroy');
+                    $('.ldl .crawl').text("");
+                    // Reset any custom padding
+                    $('.ldl .lower-text.left .cond').css('padding-left', '');
+                    // Start normal LDL cycle
                     displayLDL(0);
                 });
             }, 1000); // Check every second for more responsive expiration
