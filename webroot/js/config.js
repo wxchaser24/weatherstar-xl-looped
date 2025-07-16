@@ -11,7 +11,7 @@ var appearanceSettings = {
     ldlType: '', //what you want to see on ldl. 'observations' = only observations / 'crawl' = only local ad sales / 'both' = both but only will fit during the two minute flavor
     startupTime: 4000, //How long you want to wait for it to start up.
     graphicsPackage: ["v2","v3"][Math.round(Math.random())],
-    version: "1.23"
+    version: "1.3"
 }
 
 var slideSettings = {
@@ -57,4 +57,69 @@ var audioSettings = {
     //If you want your own specific song to play, add the file name to the array, 
     //and change the order to ["(file name)"] instead of adding it on.
 }
-  
+var locationSettings = {/*This is what you can edit, anything under the lcationSettings object
+  you can change it if you want but why would you when there's a settings panel to chenge this stuff.*/
+  mainCity: {
+    autoFind: true, //set to false if you want to manually set the location
+    displayname:"",//set this to whatever you want the main location's name to be
+    extraname:"",//set this to the extra name you want to give the main location for the forecast information
+    type:"",//choose the following types from below:
+    //geocode -- (coordinates)
+    //postalKey -- (zip code)
+    //iataCode -- (IATA airport code)
+    //icaoCode -- (ICAO airport code)
+    //placeid -- (PLace ID)
+    //canonicalCityId -- (Canonical City ID)
+    //locud -- (Location ID)
+    val:"",//the value that goes with the type. Like if you select iataCode, the val would be JFK if you want JFK Airport. 
+    //===NOTES===
+    //if you use geocode (coordinates), you must use the format "latitude,longitude" for the val
+    //if you use postalKey (zipcode), you must put ":US" after the zip code. I may be wrong about this but to be safe put it after the code.
+  },
+  eightCities: {
+    autoFind: true,
+    //same guidelines as mainCity location settings as the eight nearby locations.
+    cities:[//if you use less than 8 locations, please delete the unused cities objects.
+      {
+        displayname:"",
+        type:"",
+        val:"",
+      },
+      {
+        displayname:"",
+        type:"",
+        val:"",
+      },
+      {
+        displayname:"",
+        type:"",
+        val:"",
+      },
+      {
+        displayname:"",
+        type:"",
+        val:"",
+      },
+      {
+        displayname:"",
+        type:"",
+        val:"",
+      },
+      {
+        displayname:"",
+        type:"",
+        val:"",
+      },
+      {
+        displayname:"",
+        type:"",
+        val:"",
+      },
+      {
+        displayname:"",
+        type:"",
+        val:"",
+      },
+    ]
+  }
+}

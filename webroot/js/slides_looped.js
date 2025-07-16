@@ -802,7 +802,7 @@ function showSlides() {
                 $('.local-forecast .city-name').fadeOut(0);
                 $('.local-forecast .slide .period').fadeOut(0);
                 $('.local-forecast .slide .description').fadeOut(0);
-                $('.local-forecast .city-name').text(locationConfig.mainCity.displayname + " Area");
+                $('.local-forecast .city-name').text(locationConfig.mainCity.extraname);
                 $('.local-forecast .slide .period').text(dynamicLabels[0]);
                 $('.local-forecast .slide .description').text(weatherInfo.dayDesc.days[0].desc);
                 setTimeout(() => { if (audioSettings.narrations) { playAudioSafely('lf') } }, 500)
@@ -826,7 +826,7 @@ function showSlides() {
             } catch (error) {
                 console.error(error);
                 $('.local-forecast').fadeIn(0);
-                $('.local-forecast .city-name').text(locationConfig.mainCity.displayname + " Area");
+                $('.local-forecast .city-name').text(locationConfig.mainCity.extraname);
                 setTimeout(() => {
                     $('.local-forecast .noreport').fadeIn(0);
                     $('.local-forecast .city-name').fadeIn(0);
@@ -853,7 +853,7 @@ function showSlides() {
                 // Hide elements for animation
                 $('.week-ahead .city-name').fadeOut(0);
                 $('.week-ahead .information').fadeOut(0);
-                $('.week-ahead .city-name').text(locationConfig.mainCity.displayname + " Area");
+                $('.week-ahead .city-name').text(locationConfig.mainCity.extraname);
 
                 var waDivs = ["i", "ii", "iii", "iv", "v", "vi", "vii"];
                 for (var i = 0; i < 7; i++) {
@@ -871,7 +871,9 @@ function showSlides() {
                     $(`.week-ahead .day.${waDivs[i]} .name`).text(weatherInfo.weekAhead.days[i].name.toUpperCase());
                     $(`.week-ahead .day.${waDivs[i]} .cond`).text(weatherInfo.weekAhead.days[i].cond);
                     $(`.week-ahead .day.${waDivs[i]} .high`).text(weatherInfo.weekAhead.days[i].high + "°");
-                    $(`.week-ahead .day.${waDivs[i]} .low`).text(weatherInfo.weekAhead.days[i].low + "°");
+                    if(weatherInfo.weekAhead.days[i].low != null){
+                        $(`.week-ahead .day.${waDivs[i]} .low`).text(weatherInfo.weekAhead.days[i].low + "°");
+                    }
                     getIcon($(`.week-ahead .day.${waDivs[i]} .icon`), weatherInfo.weekAhead.days[i].icon, "forecast");
                 }
                 setTimeout(() => {
@@ -886,7 +888,7 @@ function showSlides() {
             } catch (error) {
                 console.error(error);
                 $('.week-ahead').fadeIn(0);
-                $('.week-ahead .city-name').text(locationConfig.mainCity.displayname + " Area");
+                $('.week-ahead .city-name').text(locationConfig.mainCity.extraname);
                 setTimeout(() => {
                     if (audioSettings.narrations) { playAudioSafely('ef') }
                     $('.week-ahead .city-name').fadeIn(0);
@@ -989,7 +991,7 @@ function showSlides() {
                     preloadNextSlide(slideSettings.order[nidx].function);
                 }
                 $('.daypart-forecast').fadeIn(0);
-                $('.daypart-forecast .city-name').text(locationConfig.mainCity.displayname + " Area");
+                $('.daypart-forecast .city-name').text(locationConfig.mainCity.extraname);
                 var barTemps = [
                     weatherInfo.daypartForecast.times[0].temp,
                     weatherInfo.daypartForecast.times[1].temp,
@@ -1029,7 +1031,7 @@ function showSlides() {
                 console.error(error);
                 $('.daypart-forecast').css("background-image", `url(images/${appearanceSettings.graphicsPackage}/dpf_${weatherInfo.daypartForecast.dayName}.png)`)
                 $('.daypart-forecast').fadeIn(0);
-                $('.daypart-forecast .city-name').text(locationConfig.mainCity.displayname + " Area");
+                $('.daypart-forecast .city-name').text(locationConfig.mainCity.extraname);
                 $('.daypart-forecast .noreport').fadeIn(0);
                 $(`.daypart-forecast .hour.i`).fadeOut(0);
                 $(`.daypart-forecast .hour.ii`).fadeOut(0);

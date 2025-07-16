@@ -151,7 +151,7 @@ function grabData() {
           name: data.daypart[0].daypartName[i]
             .replace("Tomorrow", dayOfWeek[new Date().getHours() > 3 ? new Date().getDay() : new Date().getDay() - 1])
             .replace(" night", " Night"),
-          desc: data.daypart[0].narrative[i]
+          desc: data.daypart[0].narrative[i].replaceAll("F. ", ". ")
         }
         weatherInfo.dayDesc.days.push(dayDescToAdd);
       }
@@ -164,6 +164,9 @@ function grabData() {
         dayWAtoAdd.icon = data.daypart[0].iconCodeExtend[(data.daypart[0].iconCodeExtend[0] === null ? (j * 2 + 2) : (j * 2))];
         dayWAtoAdd.high = data.daypart[0].temperature[(data.daypart[0].temperature[0] === null ? (j * 2 + 2) : (j * 2))];
         dayWAtoAdd.low = data.daypart[0].temperature[(data.daypart[0].temperature[0] === null ? (j * 2 + 3) : (j * 2 + 1))];
+        if(data.daypart[0].temperature[0] != null && j === 0){
+          dayWAtoAdd.low = null;
+        }
         weatherInfo.weekAhead.days.push(dayWAtoAdd)
       }
       //ALMANAC
