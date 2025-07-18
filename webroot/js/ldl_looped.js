@@ -67,6 +67,12 @@ function displayLDL(idx){
     if(slideSettings.flavor == 'D') {ldlDelay = 7150;}
     if(weatherInfo.bulletin.crawlAlert.enabled){
         if(warningCrawlEnabled == false){
+            // Hide all LDL elements first regardless of mode
+            $('.ldl .upper-text').fadeOut(0);
+            $('.ldl .lower-text').fadeOut(0);
+            $('.ldl .crawl').marquee('destroy');
+            $('.ldl .crawl').text("");
+            
             $('.ldl .warning-crawl').fadeIn(0);
             console.log(weatherInfo.bulletin.crawlAlert.alert.significance);
             // Use the appropriate background image based on significance
@@ -169,6 +175,7 @@ function displayLDL(idx){
         if(ldlIdx == -1) return;
         $('.ldl .upper-text').fadeOut(0);
         $('.ldl .lower-text').fadeOut(0);
+        $('.ldl').fadeIn(0); // Ensure LDL is visible for crawl mode
         adCrawl();
         ldlIdx = -1;
         return;
