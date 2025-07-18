@@ -39,13 +39,13 @@ function monitorAlertStatus() {
                 // First check if current alert is still active
                 var currentAlertStillActive = false;
                 if(currentAlertKey) {
-                    for(var i = 0; i < data.alerts.length; i++){
+                for(var i = 0; i < data.alerts.length; i++){
                         if(data.alerts[i].detailKey === currentAlertKey) {
                             // Verify alert hasn't expired
                             var expirationTime = new Date(data.alerts[i].expireTimeLocal);
                             if(expirationTime > new Date()) {
                                 currentAlertStillActive = true;
-                                break;
+                        break;
                             }
                         }
                     }
@@ -781,7 +781,15 @@ function showSlides() {
                 $('.local-forecast .slide .description').fadeOut(0);
                 $('.local-forecast .city-name').text(locationConfig.mainCity.extraname);
                 
-                // Use period names directly from the forecast data
+                // Get tomorrow's name for proper day reference
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const tomorrowName = tomorrow.toLocaleDateString('en-US', { weekday: 'long' });
+                
+                // Check if we're in the "Today, Tonight, Tomorrow" pattern
+                const isNewPattern = weatherInfo.dayDesc.days[0].name === "Today";
+                
+                // Use period names from the forecast data
                 $('.local-forecast .slide .period').text(weatherInfo.dayDesc.days[0].name);
                 $('.local-forecast .slide .description').text(weatherInfo.dayDesc.days[0].desc);
                 
@@ -796,7 +804,9 @@ function showSlides() {
                     $('.local-forecast .slide .description').text(weatherInfo.dayDesc.days[1].desc);
                 }, slideSettings.slideDelay);
                 setTimeout(() => {
-                    $('.local-forecast .slide .period').text(weatherInfo.dayDesc.days[2].name);
+                    // If we're in the "Today, Tonight, Friday" pattern, use tomorrow's name
+                    const periodName = isNewPattern ? tomorrowName : weatherInfo.dayDesc.days[2].name;
+                    $('.local-forecast .slide .period').text(periodName);
                     $('.local-forecast .slide .description').text(weatherInfo.dayDesc.days[2].desc);
                 }, slideSettings.slideDelay * 2);
                 setTimeout(() => {
@@ -858,7 +868,7 @@ function showSlides() {
                     $(`.week-ahead .day.${waDivs[i]} .cond`).text(weatherInfo.weekAhead.days[i].cond);
                     $(`.week-ahead .day.${waDivs[i]} .high`).text(weatherInfo.weekAhead.days[i].high + "°");
                     if(weatherInfo.weekAhead.days[i].low != null){
-                        $(`.week-ahead .day.${waDivs[i]} .low`).text(weatherInfo.weekAhead.days[i].low + "°");
+                    $(`.week-ahead .day.${waDivs[i]} .low`).text(weatherInfo.weekAhead.days[i].low + "°");
                     }
                     getIcon($(`.week-ahead .day.${waDivs[i]} .icon`), weatherInfo.weekAhead.days[i].icon, "forecast");
                 }
@@ -867,9 +877,9 @@ function showSlides() {
                     $('.week-ahead .city-name').fadeIn(0);
                     $('.week-ahead .information').fadeIn(0);
                 }, 500)
-                setTimeout(() => {
-                    $('.week-ahead').fadeOut(0);
-                    slideCallBack();
+                        setTimeout(() => {
+                        $('.week-ahead').fadeOut(0);
+                        slideCallBack();
                 }, slideSettings.slideDelay);
             } catch (error) {
                 console.error(error);
@@ -880,9 +890,9 @@ function showSlides() {
                     $('.week-ahead .city-name').fadeIn(0);
                     $('.week-ahead .noreport').fadeIn(0);
                 }, 500)
-                setTimeout(() => {
-                    $('.week-ahead').fadeOut(0);
-                    slideCallBack();
+                        setTimeout(() => {
+                        $('.week-ahead').fadeOut(0);
+                        slideCallBack();
                 }, slideSettings.slideDelay);
             }
         },
