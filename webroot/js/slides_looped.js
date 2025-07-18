@@ -422,36 +422,11 @@ function updateForecastDataIfNeeded() {
         (lastUpdateHour < 15 && currentHour >= 15) || 
         (lastUpdateHour >= 15 && currentHour < 15 && currentTime - lastUpdateTime > 8 * 60 * 60 * 1000)) {
         
-        console.log("Time boundary crossed at", new Date().toLocaleTimeString(), "- updating forecast labels");
-        
-        // Update 7-day forecast day names to reflect current time
-        if (weatherInfo.weekAhead && weatherInfo.weekAhead.days) {
-            updateWeekAheadDayNames();
-        }
+        console.log("Time boundary crossed at", new Date().toLocaleTimeString());
         
         lastUpdateTime = currentTime;
         lastUpdateHour = currentHour;
     }
-}
-
-function updateWeekAheadDayNames() {
-    // Recalculate 7-day forecast day names based on current time
-    const today = new Date();
-    const currentHour = today.getHours();
-    
-    // If after 3 PM, the "first" day is actually tomorrow
-    const startOffset = currentHour >= 15 ? 1 : 0;
-    
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    
-    for (let i = 0; i < weatherInfo.weekAhead.days.length && i < 7; i++) {
-        const targetDate = new Date(today);
-        targetDate.setDate(today.getDate() + startOffset + i);
-        const dayIndex = targetDate.getDay();
-        weatherInfo.weekAhead.days[i].name = dayNames[dayIndex];
-    }
-    
-    console.log("Updated 7-day forecast day names:", weatherInfo.weekAhead.days.map(d => d.name));
 }
 
 function slideKickOff() {
@@ -862,7 +837,11 @@ function showSlides() {
 
                 var waDivs = ["i", "ii", "iii", "iv", "v", "vi", "vii"];
                 for (var i = 0; i < 7; i++) {
-                    if (weatherInfo.weekAhead.days[i].name == "Sat" || weatherInfo.weekAhead.days[i].name == "Sun") {
+                    // Get day name directly from the data
+                    var dayName = weatherInfo.weekAhead.days[i].name;
+                    
+                    // Check if it's a weekend day
+                    if (dayName === "Sat" || dayName === "Sun") {
                         // Weekend styling: white background, blue text, no text shadow
                         $(`.week-ahead .day.${waDivs[i]} .weekend`).fadeIn(0);
                         $(`.week-ahead .day.${waDivs[i]} .name`).css("color", "#001cad");
@@ -873,7 +852,9 @@ function showSlides() {
                         $(`.week-ahead .day.${waDivs[i]} .name`).css("color", "");
                         $(`.week-ahead .day.${waDivs[i]} .name`).css("text-shadow", "");
                     }
-                    $(`.week-ahead .day.${waDivs[i]} .name`).text(weatherInfo.weekAhead.days[i].name.toUpperCase());
+                    
+                    // Display the data
+                    $(`.week-ahead .day.${waDivs[i]} .name`).text(dayName.toUpperCase());
                     $(`.week-ahead .day.${waDivs[i]} .cond`).text(weatherInfo.weekAhead.days[i].cond);
                     $(`.week-ahead .day.${waDivs[i]} .high`).text(weatherInfo.weekAhead.days[i].high + "°");
                     if(weatherInfo.weekAhead.days[i].low != null){
@@ -886,9 +867,9 @@ function showSlides() {
                     $('.week-ahead .city-name').fadeIn(0);
                     $('.week-ahead .information').fadeIn(0);
                 }, 500)
-                        setTimeout(() => {
-                        $('.week-ahead').fadeOut(0);
-                        slideCallBack();
+                setTimeout(() => {
+                    $('.week-ahead').fadeOut(0);
+                    slideCallBack();
                 }, slideSettings.slideDelay);
             } catch (error) {
                 console.error(error);
@@ -899,9 +880,9 @@ function showSlides() {
                     $('.week-ahead .city-name').fadeIn(0);
                     $('.week-ahead .noreport').fadeIn(0);
                 }, 500)
-                        setTimeout(() => {
-                        $('.week-ahead').fadeOut(0);
-                        slideCallBack();
+                setTimeout(() => {
+                    $('.week-ahead').fadeOut(0);
+                    slideCallBack();
                 }, slideSettings.slideDelay);
             }
         },
