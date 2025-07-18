@@ -59,10 +59,19 @@ function monitorAlertStatus() {
                     for(var i = 0; i < data.alerts.length; i++){
                         var expirationTime = new Date(data.alerts[i].expireTimeLocal);
                         if(expirationTime > new Date()) {
-                            // Determine priority (W=3, Y=2, A=1)
-                            var priority = data.alerts[i].significance === "W" ? 3 : 
-                                         data.alerts[i].significance === "Y" ? 2 : 
-                                         data.alerts[i].significance === "A" ? 1 : 0;
+                            // Determine priority (W=4, S=3, Y=2, A=1)
+                            var priority;
+                            if (data.alerts[i].significance === "W") {
+                                priority = 4;
+                            } else if (data.alerts[i].significance === "S") {
+                                priority = 3; // Special Weather Statement gets higher priority than Y
+                            } else if (data.alerts[i].significance === "Y") {
+                                priority = 2;
+                            } else if (data.alerts[i].significance === "A") {
+                                priority = 1;
+                            } else {
+                                priority = 0;
+                            }
                             
                             // Update highest priority alert if this one is higher
                             if(priority > highestPriority) {
@@ -78,7 +87,8 @@ function monitorAlertStatus() {
                         // Only switch to new alert if it's higher priority or current alert is no longer active
                         if(!currentAlertStillActive || 
                            (currentAlertKey !== highestPriorityAlert.detailKey && 
-                            highestPriority > (weatherInfo.bulletin.crawlAlert.alert.significance === "W" ? 3 : 
+                            highestPriority > (weatherInfo.bulletin.crawlAlert.alert.significance === "W" ? 4 : 
+                                             weatherInfo.bulletin.crawlAlert.alert.significance === "S" ? 3 :
                                              weatherInfo.bulletin.crawlAlert.alert.significance === "Y" ? 2 : 
                                              weatherInfo.bulletin.crawlAlert.alert.significance === "A" ? 1 : 0))) {
                             activeAlert = highestPriorityAlert;
@@ -87,14 +97,46 @@ function monitorAlertStatus() {
                 }
             }
             
-            if (!alertActive && warningCrawlEnabled) {
-                // Alerts have expired - hide warning crawl and show normal LDL
+            function restoreLDL() {
+                // Common function to restore LDL state consistently
                 weatherInfo.bulletin.crawlAlert.enabled = false;
                 warningCrawlEnabled = false;
+                
+                // First clean up warning crawl
                 $('.ldl .warning-crawl').fadeOut(0);
                 $('.ldl .warning-crawl .marquee').marquee('destroy');
+                
+                // Reset all LDL elements to initial state
+                $('.ldl .upper-text').fadeOut(0);
+                $('.ldl .lower-text').fadeOut(0);
+                $('.ldl .lower-text.left .label').fadeOut(0);
+                $('.ldl .lower-text.left .cond').fadeOut(0);
+                $('.ldl .lower-text.left .cc').fadeOut(0);
+                $('.ldl .lower-text.right').fadeOut(0);
+                $('.ldl .lower-text.right .label').fadeOut(0);
+                $('.ldl .lower-text.right .cond').fadeOut(0);
+                $('.ldl .crawl').marquee('destroy');
+                $('.ldl .crawl').text("");
+                $('.ldl .lower-text.left .cond').css('padding-left', '');
+                
+                // Show LDL container and start new cycle
                 $('.ldl').fadeIn(0);
-                displayLDL(0); // Start normal LDL cycle
+                
+                // Clear any existing intervals
+                if (warningCrawlCheckInterval) {
+                    clearInterval(warningCrawlCheckInterval);
+                    warningCrawlCheckInterval = null;
+                }
+                clearInterval(ldlInterval);
+                
+                // Start fresh LDL cycle
+                ldlIdx = 0;
+                displayLDL(0);
+            }
+            
+            if (!alertActive && warningCrawlEnabled) {
+                // Alerts have expired - restore LDL
+                restoreLDL();
             } else if (alertActive && activeAlert && (!warningCrawlEnabled || currentAlertKey !== activeAlert.detailKey)) {
                 // New alert has become active or higher priority alert available - fetch details and show warning crawl
                 weatherInfo.bulletin.crawlAlert.enabled = true;
@@ -123,12 +165,7 @@ function monitorAlertStatus() {
         }).fail(function(){
             // If API call fails and we have a warning crawl active, assume it has expired
             if (warningCrawlEnabled) {
-                weatherInfo.bulletin.crawlAlert.enabled = false;
-                warningCrawlEnabled = false;
-                $('.ldl .warning-crawl').fadeOut(0);
-                $('.ldl .warning-crawl .marquee').marquee('destroy');
-                $('.ldl').fadeIn(0);
-                displayLDL(0);
+                restoreLDL();
             }
         });
     }, 1000); // Check every second for more responsive expiration
