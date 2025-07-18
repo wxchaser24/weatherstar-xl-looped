@@ -422,36 +422,11 @@ function updateForecastDataIfNeeded() {
         (lastUpdateHour < 15 && currentHour >= 15) || 
         (lastUpdateHour >= 15 && currentHour < 15 && currentTime - lastUpdateTime > 8 * 60 * 60 * 1000)) {
         
-        console.log("Time boundary crossed at", new Date().toLocaleTimeString(), "- updating forecast labels");
-        
-        // Update 7-day forecast day names to reflect current time
-        if (weatherInfo.weekAhead && weatherInfo.weekAhead.days) {
-            updateWeekAheadDayNames();
-        }
+        console.log("Time boundary crossed at", new Date().toLocaleTimeString());
         
         lastUpdateTime = currentTime;
         lastUpdateHour = currentHour;
     }
-}
-
-function updateWeekAheadDayNames() {
-    // Recalculate 7-day forecast day names based on current time
-    const today = new Date();
-    const currentHour = today.getHours();
-    
-    // If after 3 PM, the "first" day is actually tomorrow
-    const startOffset = currentHour >= 15 ? 1 : 0;
-    
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    
-    for (let i = 0; i < weatherInfo.weekAhead.days.length && i < 7; i++) {
-        const targetDate = new Date(today);
-        targetDate.setDate(today.getDate() + startOffset + i);
-        const dayIndex = targetDate.getDay();
-        weatherInfo.weekAhead.days[i].name = dayNames[dayIndex];
-    }
-    
-    console.log("Updated 7-day forecast day names:", weatherInfo.weekAhead.days.map(d => d.name));
 }
 
 function slideKickOff() {
@@ -799,49 +774,17 @@ function showSlides() {
                     throw new Error("36hr forecast has no data");
                 }
                 
-                // Generate dynamic day labels based on current time
-                function getDynamicPeriodLabels() {
-                    var now = new Date();
-                    var currentHour = now.getHours();
-                    var currentMinutes = now.getMinutes();
-                    var totalMinutes = (currentHour * 60) + currentMinutes;
-                    var labels = [];
-                    
-                    // Calculate day names based on the time period
-                    var todayName = now.toLocaleDateString('en-US', { weekday: 'long' });
-                    var tomorrow = new Date(now);
-                    tomorrow.setDate(tomorrow.getDate() + 1);
-                    var tomorrowName = tomorrow.toLocaleDateString('en-US', { weekday: 'long' });
-                    
-                    // Convert hour boundaries to minute-based checks (3:05 = 185 minutes, 15:05 = 905 minutes, 22:05 = 1325 minutes)
-                    if (totalMinutes >= 185 && totalMinutes < 905) {
-                        // 3:05 AM to 3:05 PM: Today, Tonight, Tomorrow's Day Name
-                        labels = ["Today", "Tonight", tomorrowName];
-                    } else if (totalMinutes >= 905 && totalMinutes < 1320) {
-                        // 3:05 PM to 10:00 PM: Tonight, Tomorrow's Day Name, Tomorrow Night
-                        labels = ["Tonight", tomorrowName, tomorrowName + " Night"];
-                    } else if (totalMinutes >= 1320) {
-                        // 10:00 PM to 11:59 PM: Overnight, Tomorrow's Day Name, Tomorrow Night
-                        labels = ["Overnight", tomorrowName, tomorrowName + " Night"];
-                    } else {
-                        // 12:00 AM to 3:05 AM: Overnight, Today's Day Name, Today's Day Name + Night
-                        // After midnight, "today" is the current day name
-                        labels = ["Overnight", todayName, todayName + " Night"];
-                    }
-                    
-                    return labels;
-                }
-                
-                var dynamicLabels = getDynamicPeriodLabels();
-                
                 $('.local-forecast').fadeIn(0);
                 // Hide elements for animation
                 $('.local-forecast .city-name').fadeOut(0);
                 $('.local-forecast .slide .period').fadeOut(0);
                 $('.local-forecast .slide .description').fadeOut(0);
                 $('.local-forecast .city-name').text(locationConfig.mainCity.extraname);
-                $('.local-forecast .slide .period').text(dynamicLabels[0]);
+                
+                // Use period names directly from the forecast data
+                $('.local-forecast .slide .period').text(weatherInfo.dayDesc.days[0].name);
                 $('.local-forecast .slide .description').text(weatherInfo.dayDesc.days[0].desc);
+                
                 setTimeout(() => { if (audioSettings.narrations) { playAudioSafely('lf') } }, 500)
                 setTimeout(() => {
                     $('.local-forecast .city-name').fadeIn(0);
@@ -849,16 +792,16 @@ function showSlides() {
                     $('.local-forecast .slide .description').fadeIn(0);
                 }, animationDelay)
                 setTimeout(() => {
-                    $('.local-forecast .slide .period').text(dynamicLabels[1]);
+                    $('.local-forecast .slide .period').text(weatherInfo.dayDesc.days[1].name);
                     $('.local-forecast .slide .description').text(weatherInfo.dayDesc.days[1].desc);
                 }, slideSettings.slideDelay);
                 setTimeout(() => {
-                    $('.local-forecast .slide .period').text(dynamicLabels[2]);
+                    $('.local-forecast .slide .period').text(weatherInfo.dayDesc.days[2].name);
                     $('.local-forecast .slide .description').text(weatherInfo.dayDesc.days[2].desc);
                 }, slideSettings.slideDelay * 2);
-                        setTimeout(() => {
-                        $('.local-forecast').fadeOut(0);
-                        slideCallBack();
+                setTimeout(() => {
+                    $('.local-forecast').fadeOut(0);
+                    slideCallBack();
                 }, slideSettings.slideDelay * 3);
             } catch (error) {
                 console.error(error);
@@ -868,9 +811,9 @@ function showSlides() {
                     $('.local-forecast .noreport').fadeIn(0);
                     $('.local-forecast .city-name').fadeIn(0);
                 }, 900)
-                        setTimeout(() => {
-                        $('.local-forecast').fadeOut(0);
-                        slideCallBack();
+                setTimeout(() => {
+                    $('.local-forecast').fadeOut(0);
+                    slideCallBack();
                 }, slideSettings.slideDelay * 3);
             }
         },
@@ -894,7 +837,11 @@ function showSlides() {
 
                 var waDivs = ["i", "ii", "iii", "iv", "v", "vi", "vii"];
                 for (var i = 0; i < 7; i++) {
-                    if (weatherInfo.weekAhead.days[i].name == "Sat" || weatherInfo.weekAhead.days[i].name == "Sun") {
+                    // Get day name directly from the data
+                    var dayName = weatherInfo.weekAhead.days[i].name;
+                    
+                    // Check if it's a weekend day
+                    if (dayName === "Sat" || dayName === "Sun") {
                         // Weekend styling: white background, blue text, no text shadow
                         $(`.week-ahead .day.${waDivs[i]} .weekend`).fadeIn(0);
                         $(`.week-ahead .day.${waDivs[i]} .name`).css("color", "#001cad");
@@ -905,7 +852,9 @@ function showSlides() {
                         $(`.week-ahead .day.${waDivs[i]} .name`).css("color", "");
                         $(`.week-ahead .day.${waDivs[i]} .name`).css("text-shadow", "");
                     }
-                    $(`.week-ahead .day.${waDivs[i]} .name`).text(weatherInfo.weekAhead.days[i].name.toUpperCase());
+                    
+                    // Display the data
+                    $(`.week-ahead .day.${waDivs[i]} .name`).text(dayName.toUpperCase());
                     $(`.week-ahead .day.${waDivs[i]} .cond`).text(weatherInfo.weekAhead.days[i].cond);
                     $(`.week-ahead .day.${waDivs[i]} .high`).text(weatherInfo.weekAhead.days[i].high + "°");
                     if(weatherInfo.weekAhead.days[i].low != null){
@@ -918,9 +867,9 @@ function showSlides() {
                     $('.week-ahead .city-name').fadeIn(0);
                     $('.week-ahead .information').fadeIn(0);
                 }, 500)
-                        setTimeout(() => {
-                        $('.week-ahead').fadeOut(0);
-                        slideCallBack();
+                setTimeout(() => {
+                    $('.week-ahead').fadeOut(0);
+                    slideCallBack();
                 }, slideSettings.slideDelay);
             } catch (error) {
                 console.error(error);
@@ -931,9 +880,9 @@ function showSlides() {
                     $('.week-ahead .city-name').fadeIn(0);
                     $('.week-ahead .noreport').fadeIn(0);
                 }, 500)
-                        setTimeout(() => {
-                        $('.week-ahead').fadeOut(0);
-                        slideCallBack();
+                setTimeout(() => {
+                    $('.week-ahead').fadeOut(0);
+                    slideCallBack();
                 }, slideSettings.slideDelay);
             }
         },
